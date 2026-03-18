@@ -3,12 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../bot_management/providers/bot_management_providers.dart';
+// Импорт теперь будет работать после перемещения файла
+import '../widgets/business_card.dart';
 
 class MyBotsScreen extends ConsumerWidget {
   const MyBotsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Сохранена оригинальная переменная
     final connectedBotsAsync = ref.watch(connectedBotsProvider);
 
     return Scaffold(
@@ -30,33 +33,14 @@ class MyBotsScreen extends ConsumerWidget {
             itemCount: businesses.length,
             itemBuilder: (context, index) {
               final business = businesses[index];
-              return Card(
-                margin: const EdgeInsets.only(bottom: 12),
-                child: ListTile(
-                  contentPadding: const EdgeInsets.all(12),
-                  leading: const CircleAvatar(
-                    backgroundColor: AppColors.accent,
-                    child: Icon(Icons.smart_toy_outlined, color: Colors.white),
-                  ),
-                  title: Text(
-                    'Бот: ${business.botId}',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(
-                    'Статус: ${business.status}',
-                    style: TextStyle(
-                      color: business.status == 'active'
-                          ? AppColors.success
-                          : AppColors.warning,
-                    ),
-                  ),
-                  trailing: ElevatedButton(
-                    onPressed: () => context.push(
-                      '/bot-management/${business.id}',
-                      extra: business,
-                    ),
-                    child: const Text('Управление'),
-                  ),
+
+              // Заменено: старый Card/ListTile заменен на BusinessCard
+              // Вся логика навигации и передачи данных сохранена
+              return BusinessCard(
+                business: business,
+                onManage: () => context.push(
+                  '/bot-management/${business.id}',
+                  extra: business,
                 ),
               );
             },
