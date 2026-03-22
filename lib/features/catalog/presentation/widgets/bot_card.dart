@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:google_fonts/google_fonts.dart'; // Сохранено
 import '../../domain/bot.dart';
 import '../../../../core/theme/app_theme.dart';
 
@@ -20,8 +21,9 @@ class BotCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       color: AppColors.card,
-      elevation: 2,
-      shadowColor: Colors.black12,
+      // ПРИМЕНЕННАЯ ПРАВКА: Усиление тени для контраста на светлом фоне
+      elevation: 4,
+      shadowColor: Colors.black26,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: const BorderSide(color: AppColors.border, width: 0.5),
@@ -81,24 +83,29 @@ class BotCard extends StatelessWidget {
                       bot.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
+                        fontFamily:
+                            GoogleFonts.nunito().fontFamily, // Сохранено
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                         color: AppColors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 4),
-                    // Чип категории (исправлен .withValues)
+                    // Чип категории
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: AppColors.accent.withValues(alpha: 0.08),
+                        color: AppColors.accent
+                            .withValues(alpha: 0.08), // Сохранено
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         bot.category.toUpperCase(),
-                        style: const TextStyle(
+                        style: TextStyle(
+                          fontFamily:
+                              GoogleFonts.nunito().fontFamily, // Сохранено
                           fontSize: 9,
                           fontWeight: FontWeight.w900,
                           color: AppColors.accent,
@@ -111,7 +118,9 @@ class BotCard extends StatelessWidget {
                       bot.description,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
+                        fontFamily:
+                            GoogleFonts.nunito().fontFamily, // Сохранено
                         color: AppColors.textSecondary,
                         fontSize: 12,
                       ),

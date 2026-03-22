@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_theme.dart'; // Импорт темы
 import '../../domain/business.dart';
 import '../../providers/bot_management_providers.dart';
@@ -76,7 +77,10 @@ class _BotConfigScreenState extends ConsumerState<BotConfigScreen> {
   InputDecoration _buildInputDecoration(String hint) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: AppColors.textSecondary),
+      hintStyle: TextStyle(
+        color: AppColors.textSecondary,
+        fontFamily: GoogleFonts.nunito().fontFamily,
+      ),
       filled: true,
       fillColor: AppColors.card,
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
@@ -125,46 +129,58 @@ class _BotConfigScreenState extends ConsumerState<BotConfigScreen> {
             child: CircularProgressIndicator(color: AppColors.accent)),
         error: (err, stack) => Center(
             child: Text('Ошибка: $err',
-                style: const TextStyle(color: Colors.white))),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: GoogleFonts.nunito().fontFamily,
+                ))),
         data: (_) => SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'СИСТЕМНЫЙ ПРОМПТ',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
                   color: AppColors.textSecondary,
                   letterSpacing: 1.2,
+                  fontFamily: GoogleFonts.nunito().fontFamily,
                 ),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: _systemPromptController,
                 maxLines: 10,
-                style: const TextStyle(
-                    color: Colors.white, fontSize: 15, height: 1.4),
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    height: 1.4,
+                    fontFamily: GoogleFonts.nunito().fontFamily),
                 decoration: _buildInputDecoration(
                     'Инструкции для ИИ: как он должен общаться, какие услуги предлагать...'),
                 enabled: !_isSaving,
               ),
               const SizedBox(height: 32),
-              const Text(
+              Text(
                 'ПРИВЕТСТВИЕ',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
                   color: AppColors.textSecondary,
                   letterSpacing: 1.2,
+                  fontFamily: GoogleFonts.nunito().fontFamily,
                 ),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: _welcomeMessageController,
                 maxLines: 3,
-                style: const TextStyle(color: Colors.white, fontSize: 15),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontFamily: GoogleFonts.nunito().fontFamily,
+                ),
                 decoration: _buildInputDecoration(
                     'Текст, который бот напишет первым...'),
                 enabled: !_isSaving,
@@ -192,10 +208,13 @@ class _BotConfigScreenState extends ConsumerState<BotConfigScreen> {
                           child: CircularProgressIndicator(
                               color: Colors.white, strokeWidth: 2),
                         )
-                      : const Text(
+                      : Text(
                           'СОХРАНИТЬ ИЗМЕНЕНИЯ',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, letterSpacing: 1),
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1,
+                            fontFamily: GoogleFonts.nunito().fontFamily,
+                          ),
                         ),
                 ),
               ),

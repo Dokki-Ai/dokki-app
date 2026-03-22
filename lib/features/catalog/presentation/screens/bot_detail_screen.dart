@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/bot.dart';
 
@@ -14,11 +15,13 @@ class BotDetailScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        // ПРИМЕНЕННАЯ ПРАВКА: Сплошной фон вместо прозрачного
+        backgroundColor: AppColors.background,
         elevation: 0,
         leading: const BackButton(color: AppColors.textPrimary),
       ),
-      extendBodyBehindAppBar: true,
+      // Убеждаемся, что контент начинается строго под AppBar
+      extendBodyBehindAppBar: false,
       body: Column(
         children: [
           Expanded(
@@ -34,40 +37,43 @@ class BotDetailScreen extends StatelessWidget {
                       children: [
                         Text(
                           bot.name,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
+                            fontFamily: GoogleFonts.nunito().fontFamily,
                           ),
                         ),
                         const SizedBox(height: 8),
                         Chip(
                           label: Text(bot.category),
                           backgroundColor: AppColors.card,
-                          labelStyle:
-                              const TextStyle(color: AppColors.textSecondary),
-                          side: BorderSide
-                              .none, // Исправлено: side вместо borderSide
+                          labelStyle: TextStyle(
+                              color: AppColors.textSecondary,
+                              fontFamily: GoogleFonts.nunito().fontFamily),
+                          side: BorderSide.none,
                           visualDensity: VisualDensity.compact,
                         ),
                         const SizedBox(height: 16),
                         Text(
                           bot.description,
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppColors.textSecondary,
                             fontSize: 16,
                             height: 1.5,
+                            fontFamily: GoogleFonts.nunito().fontFamily,
                           ),
                         ),
                         if (bot.features != null &&
                             bot.features!.isNotEmpty) ...[
                           const SizedBox(height: 24),
-                          const Text(
+                          Text(
                             "Возможности",
                             style: TextStyle(
                               color: AppColors.textPrimary,
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
+                              fontFamily: GoogleFonts.nunito().fontFamily,
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -135,8 +141,10 @@ class BotDetailScreen extends StatelessWidget {
           Expanded(
             child: Text(
               feature,
-              style:
-                  const TextStyle(color: AppColors.textPrimary, fontSize: 15),
+              style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 15,
+                  fontFamily: GoogleFonts.nunito().fontFamily),
             ),
           ),
         ],
@@ -148,7 +156,7 @@ class BotDetailScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16.0),
       width: double.infinity,
-      color: Colors.transparent,
+      color: AppColors.background,
       child: SafeArea(
         top: false,
         child: ElevatedButton(
@@ -157,15 +165,18 @@ class BotDetailScreen extends StatelessWidget {
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.accent,
-            foregroundColor: AppColors.textPrimary,
-            minimumSize: const Size(double.infinity, 50),
+            foregroundColor: Colors.white,
+            minimumSize: const Size(double.infinity, 56),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             elevation: 0,
           ),
-          child: const Text(
+          child: Text(
             "Подключить",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                fontFamily: GoogleFonts.nunito().fontFamily),
           ),
         ),
       ),

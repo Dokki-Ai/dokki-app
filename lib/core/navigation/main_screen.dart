@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../../features/catalog/presentation/screens/catalog_screen.dart';
 import '../../features/my_bots/presentation/screens/my_bots_screen.dart';
@@ -45,10 +46,16 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         unselectedItemColor: AppColors.textSecondary,
         elevation: 8,
         type: BottomNavigationBarType.fixed,
-        selectedLabelStyle:
-            const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
-        unselectedLabelStyle:
-            const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
+        selectedLabelStyle: TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: 12,
+          fontFamily: GoogleFonts.nunito().fontFamily,
+        ),
+        unselectedLabelStyle: TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: 12,
+          fontFamily: GoogleFonts.nunito().fontFamily,
+        ),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.storefront_outlined),

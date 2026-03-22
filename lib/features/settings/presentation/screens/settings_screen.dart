@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../auth/providers/auth_providers.dart';
 import '../../../../core/theme/app_theme.dart';
 
@@ -32,11 +33,12 @@ class SettingsScreen extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   'ВЫЙТИ ИЗ АККАУНТА',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1,
+                    fontFamily: GoogleFonts.nunito().fontFamily,
                   ),
                 ),
               ),

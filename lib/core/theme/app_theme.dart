@@ -30,7 +30,7 @@ class AppTheme {
           onSurface: AppColors.textPrimary,
         ),
 
-        // Исправлено: CardThemeData вместо CardTheme для устранения ошибки компиляции
+        // Использование CardThemeData для устранения ошибки компиляции
         cardTheme: const CardThemeData(
           color: AppColors.card,
           elevation: 0,
@@ -70,7 +70,10 @@ class AppTheme {
           ),
         ),
 
-        textTheme: GoogleFonts.nunitoTextTheme().copyWith(
+        // ПРИМЕНЕННАЯ ПРАВКА: Добавлена базовая тема в конструктор шрифтов
+        textTheme: GoogleFonts.nunitoTextTheme(
+          ThemeData.light().textTheme,
+        ).copyWith(
           bodyLarge: const TextStyle(color: AppColors.textPrimary),
           bodyMedium: const TextStyle(color: AppColors.textPrimary),
           titleLarge: const TextStyle(
