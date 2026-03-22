@@ -37,7 +37,7 @@ class CatalogScreen extends ConsumerWidget {
 
               return BotCard(
                 bot: bot,
-                onTap: () => context.push('/connect-bot/${bot.id}/${bot.name}'),
+                onTap: () => context.push('/bot-detail/${bot.id}', extra: bot),
               );
             },
           );
