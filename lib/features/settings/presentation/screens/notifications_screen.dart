@@ -27,7 +27,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       body: ListView(
         children: [
           SwitchListTile(
-            activeColor: AppColors.accent,
+            activeThumbColor: AppColors.accent,
             tileColor: AppColors.surface,
             title: Text('Push-уведомления', style: textTheme.bodyLarge),
             subtitle: Text(
@@ -40,7 +40,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           ),
           const Divider(color: AppColors.border, height: 1),
           SwitchListTile(
-            activeColor: AppColors.accent,
+            activeThumbColor: AppColors.accent,
             tileColor: AppColors.surface,
             title: Text('Email-уведомления', style: textTheme.bodyLarge),
             subtitle: Text(
