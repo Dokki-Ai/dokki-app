@@ -6,6 +6,8 @@ import '../../features/catalog/presentation/screens/catalog_screen.dart';
 import '../../features/my_bots/presentation/screens/my_bots_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/support/presentation/screens/support_screen.dart';
+import '../localization/language_provider.dart';
+import '../localization/app_strings.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
@@ -32,6 +34,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final AppStrings s = ref.watch(stringsProvider);
+
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
@@ -44,22 +48,22 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         selectedItemColor: AppColors.accent,
         unselectedItemColor: AppColors.textSecondary,
         type: BottomNavigationBarType.fixed,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.store),
-            label: 'Магазин',
+            icon: const FaIcon(FontAwesomeIcons.store),
+            label: s.navShop,
           ),
           BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.robot),
-            label: 'Мои боты',
+            icon: const FaIcon(FontAwesomeIcons.robot),
+            label: s.navMyBots,
           ),
           BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.gear),
-            label: 'Настройки',
+            icon: const FaIcon(FontAwesomeIcons.gear),
+            label: s.navSettings,
           ),
           BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.headset),
-            label: 'Поддержка',
+            icon: const FaIcon(FontAwesomeIcons.headset),
+            label: s.navSupport,
           ),
         ],
       ),
