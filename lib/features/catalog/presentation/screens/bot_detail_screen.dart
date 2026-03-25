@@ -4,6 +4,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/supabase/supabase_client.dart';
+import '../../../../core/localization/language_provider.dart';
+import '../../../../core/localization/app_strings.dart';
 import '../../domain/bot.dart';
 
 class BotDetailScreen extends ConsumerWidget {
@@ -13,6 +15,9 @@ class BotDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Явное указание типа делает импорт используемым
+    final AppStrings s = ref.watch(stringsProvider);
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -62,7 +67,7 @@ class BotDetailScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          '\$${(bot.priceMonthly ?? 0).toStringAsFixed(0)}/мес',
+                          '\$${(bot.priceMonthly ?? 0).toStringAsFixed(0)}/${s.payMonth}',
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -75,7 +80,7 @@ class BotDetailScreen extends ConsumerWidget {
                         const SizedBox(height: 12),
                         if (bot.description.isNotEmpty) ...[
                           Text(
-                            'ОПИСАНИЕ',
+                            s.catDescription.toUpperCase(),
                             style: Theme.of(context).textTheme.labelSmall,
                           ),
                           const SizedBox(height: 8),
@@ -91,7 +96,7 @@ class BotDetailScreen extends ConsumerWidget {
                           const SizedBox(height: 12),
                         ],
                         Text(
-                          'ФУНКЦИИ',
+                          s.catFunctions.toUpperCase(),
                           style: Theme.of(context).textTheme.labelSmall,
                         ),
                         const SizedBox(height: 12),
@@ -155,7 +160,7 @@ class BotDetailScreen extends ConsumerWidget {
                     });
                   }
                 },
-                child: const Text('Подключить'),
+                child: Text(s.botConnect),
               ),
             ),
           ),

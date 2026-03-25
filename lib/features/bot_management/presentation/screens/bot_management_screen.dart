@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/theme/app_theme.dart'; // Импорт темы
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/localization/language_provider.dart';
+import '../../../../core/localization/app_strings.dart';
 import '../../domain/business.dart';
 import 'appointments_screen.dart';
 import 'bot_config_screen.dart';
@@ -16,11 +18,12 @@ class BotManagementScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bool isActivated = business.telegramGroupId != null;
+    final s = ref.watch(stringsProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background, // Тёмный фон
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(business.botName ?? 'Управление ботом'),
+        title: Text(business.botName ?? s.bmTitle),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -28,14 +31,12 @@ class BotManagementScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Карточка статуса бота (переписана на Container)
-            _buildStatusCard(isActivated),
+            _buildStatusCard(isActivated, s),
             const SizedBox(height: 32),
 
-            // Основные действия
-            const Text(
-              'ДЕЙСТВИЯ',
-              style: TextStyle(
+            Text(
+              s.bmActions,
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
                 color: AppColors.textSecondary,
@@ -44,7 +45,6 @@ class BotManagementScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
 
-            // Кнопка записей
             SizedBox(
               width: double.infinity,
               height: 56,
@@ -56,7 +56,7 @@ class BotManagementScreen extends ConsumerWidget {
                   ),
                 ),
                 icon: const Icon(Icons.format_list_bulleted_rounded, size: 20),
-                label: const Text('ЗАПИСИ'),
+                label: Text(s.bmAppointments),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.textPrimary,
                   side: const BorderSide(color: AppColors.border, width: 1.5),
@@ -71,7 +71,6 @@ class BotManagementScreen extends ConsumerWidget {
 
             const SizedBox(height: 12),
 
-            // Кнопка Настройки
             SizedBox(
               width: double.infinity,
               height: 56,
@@ -83,7 +82,7 @@ class BotManagementScreen extends ConsumerWidget {
                   ),
                 ),
                 icon: const Icon(Icons.settings_suggest_rounded, size: 20),
-                label: const Text('НАСТРОЙКИ ПРОМПТА'),
+                label: Text(s.bmPromptSettings),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.textPrimary,
                   side: const BorderSide(color: AppColors.border, width: 1.5),
@@ -98,7 +97,6 @@ class BotManagementScreen extends ConsumerWidget {
 
             const SizedBox(height: 32),
 
-            // Кнопка активации (появится, если группа еще не привязана)
             if (!isActivated)
               SizedBox(
                 width: double.infinity,
@@ -108,14 +106,14 @@ class BotManagementScreen extends ConsumerWidget {
                     // TODO: Логика Stage 2.2 (Активация группы)
                   },
                   icon: const Icon(Icons.group_add_rounded),
-                  label: const Text(
-                    'АКТИВИРОВАТЬ ГРУППУ',
-                    style: TextStyle(
+                  label: Text(
+                    s.bmActivateGroup,
+                    style: const TextStyle(
                         fontWeight: FontWeight.bold, letterSpacing: 1),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.accent,
-                    foregroundColor: Colors.white,
+                    foregroundColor: AppColors.surface,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -129,7 +127,7 @@ class BotManagementScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatusCard(bool isActivated) {
+  Widget _buildStatusCard(bool isActivated, AppStrings s) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -160,7 +158,7 @@ class BotManagementScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  isActivated ? 'Бот активен' : 'Требуется настройка',
+                  isActivated ? s.bmActive : s.bmSetupRequired,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
@@ -170,8 +168,8 @@ class BotManagementScreen extends ConsumerWidget {
                 const SizedBox(height: 4),
                 Text(
                   isActivated
-                      ? 'Бот готов к приему заказов'
-                      : 'Привяжите Telegram группу',
+                      ? s.bmReady
+                      : s.bmBindGroup,
                   style: const TextStyle(
                       fontSize: 14, color: AppColors.textSecondary),
                 ),
