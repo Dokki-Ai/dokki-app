@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 
-class LanguageScreen extends StatefulWidget {
-  const LanguageScreen({super.key});
+class NotificationsScreen extends StatefulWidget {
+  const NotificationsScreen({super.key});
 
   @override
-  State<LanguageScreen> createState() => _LanguageScreenState();
+  State<NotificationsScreen> createState() => _NotificationsScreenState();
 }
 
-class _LanguageScreenState extends State<LanguageScreen> {
-  final List<String> _languages = ['English', 'العربية', 'Русский'];
-  String _selectedLanguage = 'Русский';
+class _NotificationsScreenState extends State<NotificationsScreen> {
+  bool _pushEnabled = true;
+  bool _emailEnabled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -19,38 +19,40 @@ class _LanguageScreenState extends State<LanguageScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Язык'),
+        title: const Text('Уведомления'),
         backgroundColor: AppColors.background,
         elevation: 0,
         leading: const BackButton(color: AppColors.textPrimary),
       ),
-      body: ListView.separated(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        itemCount: _languages.length,
-        separatorBuilder: (context, index) => const Divider(
-          color: AppColors.border,
-          height: 1,
-          indent: 16,
-          endIndent: 16,
-        ),
-        itemBuilder: (context, index) {
-          final language = _languages[index];
-          return ListTile(
+      body: ListView(
+        children: [
+          SwitchListTile(
+            activeColor: AppColors.accent,
             tileColor: AppColors.surface,
-            title: Text(
-              language,
-              style: textTheme.bodyLarge,
+            title: Text('Push-уведомления', style: textTheme.bodyLarge),
+            subtitle: Text(
+              'Получать уведомления на устройство',
+              style:
+                  textTheme.bodySmall?.copyWith(color: AppColors.textSecondary),
             ),
-            trailing: _selectedLanguage == language
-                ? const Icon(Icons.check, color: AppColors.accent)
-                : null,
-            onTap: () {
-              setState(() => _selectedLanguage = language);
-              // Возвращаем выбранное значение и закрываем экран
-              Navigator.pop(context, language);
-            },
-          );
-        },
+            value: _pushEnabled,
+            onChanged: (bool value) => setState(() => _pushEnabled = value),
+          ),
+          const Divider(color: AppColors.border, height: 1),
+          SwitchListTile(
+            activeColor: AppColors.accent,
+            tileColor: AppColors.surface,
+            title: Text('Email-уведомления', style: textTheme.bodyLarge),
+            subtitle: Text(
+              'Получать уведомления на почту',
+              style:
+                  textTheme.bodySmall?.copyWith(color: AppColors.textSecondary),
+            ),
+            value: _emailEnabled,
+            onChanged: (bool value) => setState(() => _emailEnabled = value),
+          ),
+          const Divider(color: AppColors.border, height: 1),
+        ],
       ),
     );
   }

@@ -52,7 +52,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
                 content: Text('Проверьте почту для подтверждения'),
-                backgroundColor: Colors.green),
+                backgroundColor: AppColors.accent),
           );
         }
       }
@@ -103,7 +103,12 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               const SizedBox(height: 48),
               _buildLabel('Email'),
               const SizedBox(height: 8),
-              _buildTextField(_emailController, hint: 'example@mail.com'),
+              _buildTextField(
+                _emailController,
+                hint: 'example@mail.com',
+                prefixIcon: const Icon(Icons.email_outlined,
+                    color: AppColors.textSecondary),
+              ),
               const SizedBox(height: 20),
               _buildLabel('Пароль'),
               const SizedBox(height: 8),
@@ -111,6 +116,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 _passwordController,
                 obscureText: _obscurePassword,
                 hint: '••••••••',
+                prefixIcon: const Icon(Icons.lock_outline,
+                    color: AppColors.textSecondary),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _obscurePassword ? Icons.visibility_off : Icons.visibility,
@@ -120,6 +127,16 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       setState(() => _obscurePassword = !_obscurePassword),
                 ),
               ),
+              if (_isLoginMode)
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {},
+                    child: const Text('Забыли пароль?',
+                        style: TextStyle(
+                            color: AppColors.accent, fontFamily: 'Inter')),
+                  ),
+                ),
               const SizedBox(height: 40),
               SizedBox(
                 width: double.infinity,
@@ -137,11 +154,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                           height: 24,
                           width: 24,
                           child: CircularProgressIndicator(
-                              color: Colors.white, strokeWidth: 2))
+                              color: AppColors.surface, strokeWidth: 2))
                       : Text(
                           _isLoginMode ? 'ВОЙТИ' : 'ЗАРЕГИСТРИРОВАТЬСЯ',
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: AppColors.surface,
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                             fontFamily: 'Inter',
@@ -150,6 +167,55 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                         ),
                 ),
               ),
+              if (_isLoginMode) ...[
+                const SizedBox(height: 24),
+                Row(children: [
+                  const Expanded(child: Divider(color: AppColors.border)),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text('или',
+                        style: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontFamily: 'Inter')),
+                  ),
+                  const Expanded(child: Divider(color: AppColors.border)),
+                ]),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: OutlinedButton.icon(
+                    icon: Image.network('https://www.google.com/favicon.ico',
+                        height: 20),
+                    label: const Text('Войти через Google',
+                        style: TextStyle(
+                            color: AppColors.textPrimary, fontFamily: 'Inter')),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: AppColors.border),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    onPressed: () {},
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: OutlinedButton.icon(
+                    icon: const Icon(Icons.apple, color: AppColors.textPrimary),
+                    label: const Text('Sign in with Apple',
+                        style: TextStyle(
+                            color: AppColors.textPrimary, fontFamily: 'Inter')),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: AppColors.border),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    onPressed: () {},
+                  ),
+                ),
+              ],
               const SizedBox(height: 24),
               TextButton(
                 onPressed: () => setState(() => _isLoginMode = !_isLoginMode),
@@ -164,6 +230,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -183,7 +250,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 
   Widget _buildTextField(TextEditingController controller,
-      {bool obscureText = false, String? hint, Widget? suffixIcon}) {
+      {bool obscureText = false,
+      String? hint,
+      Widget? suffixIcon,
+      Widget? prefixIcon}) {
     return TextField(
       controller: controller,
       obscureText: obscureText,
@@ -195,6 +265,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         isDense: true,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),

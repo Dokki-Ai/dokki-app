@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../bot_management/presentation/screens/connect_bot_screen.dart';
-
-// TODO: Интеграция с in_app_purchase после регистрации в App Store
-// import 'package:in_app_purchase/in_app_purchase.dart';
 
 class PaymentScreen extends StatefulWidget {
   final String botId;
@@ -38,15 +35,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
           TextButton(
             onPressed: () {
               Navigator.pop(c);
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => ConnectBotScreen(
-                    botId: widget.botId,
-                    botName: widget.botName,
-                  ),
-                ),
-              );
+              // Переход через GoRouter для чистоты навигации
+              context.pushReplacement(
+                  '/connect-bot/${widget.botId}/${widget.botName}');
             },
             child: const Text('Продолжить'),
           ),
@@ -69,41 +60,37 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text('Подписка на ${widget.botName}',
-            style: const TextStyle(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Inter',
-                fontSize: 18)),
+        title: Text('Подписка', style: Theme.of(context).textTheme.titleMedium),
         backgroundColor: AppColors.surface,
         elevation: 0,
         leading: const BackButton(color: AppColors.textPrimary),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(widget.botName,
-                style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary)),
+                style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: 8),
             Text(widget.botDescription,
-                style: const TextStyle(
-                    fontSize: 16, color: AppColors.textSecondary)),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge
+                    ?.copyWith(color: AppColors.textSecondary)),
             const SizedBox(height: 32),
             _buildPlanCard(
               id: 'monthly',
               title: 'Месяц',
-              price: '\$${widget.priceMonthly.toStringAsFixed(2)}/месяц',
+              price: '\$${widget.priceMonthly.toStringAsFixed(2)}',
+              period: '/мес',
             ),
             const SizedBox(height: 16),
             _buildPlanCard(
               id: 'yearly',
               title: 'Год',
-              price: '\$${widget.priceYearly.toStringAsFixed(2)}/год',
+              price: '\$${widget.priceYearly.toStringAsFixed(2)}',
+              period: '/год',
               subtitle: 'Экономия \$$savings ($savingsPercent%)',
             ),
             const SizedBox(height: 40),
@@ -112,19 +99,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
               height: 56,
               child: ElevatedButton(
                 onPressed: _showPaymentSuccess,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.accent,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                ),
-                child: Text(
-                  'ПОДКЛЮЧИТЬ ЗА \$${currentPrice.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Inter'),
-                ),
+                child:
+                    Text('ПОДКЛЮЧИТЬ ЗА \$${currentPrice.toStringAsFixed(2)}'),
               ),
             ),
           ],
@@ -133,52 +109,62 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
-  Widget _buildPlanCard(
-      {required String id,
-      required String title,
-      required String price,
-      String? subtitle}) {
+  Widget _buildPlanCard({
+    required String id,
+    required String title,
+    required String price,
+    required String period,
+    String? subtitle,
+  }) {
     final bool isSelected = _selectedPlan == id;
     return GestureDetector(
       onTap: () => setState(() => _selectedPlan = id),
-      child: Container(
-        padding: const EdgeInsets.all(16),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
-              color: isSelected ? AppColors.accent : Colors.transparent,
-              width: 2),
+            color: isSelected ? AppColors.accent : AppColors.border,
+            width: 2,
+          ),
         ),
         child: Row(
           children: [
-            Radio<String>(
-              value: id,
-              groupValue: _selectedPlan,
-              activeColor: AppColors.accent,
-              onChanged: (val) => setState(() => _selectedPlan = val!),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Text(price,
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge
+                              ?.copyWith(color: AppColors.accent)),
+                      Text(period,
+                          style: Theme.of(context).textTheme.bodySmall),
+                    ],
+                  ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 4),
+                    Text(subtitle,
+                        style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold)),
+                  ],
+                ],
+              ),
             ),
-            const SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title,
-                    style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                        fontFamily: 'Inter')),
-                Text(price,
-                    style: const TextStyle(
-                        fontSize: 16, color: AppColors.textSecondary)),
-                if (subtitle != null)
-                  Text(subtitle,
-                      style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.green,
-                          fontWeight: FontWeight.w600)),
-              ],
-            ),
+            if (isSelected)
+              const Icon(Icons.check_circle, color: AppColors.accent, size: 28)
+            else
+              const Icon(Icons.radio_button_off,
+                  color: AppColors.border, size: 28),
           ],
         ),
       ),
