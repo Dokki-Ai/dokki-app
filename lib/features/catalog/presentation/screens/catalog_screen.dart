@@ -16,8 +16,8 @@ class CatalogScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Каталог ИИ-ботов'),
-        centerTitle: false,
+        title: const Text('Магазин'),
+        centerTitle: true,
         backgroundColor: AppColors.background,
         elevation: 0,
       ),

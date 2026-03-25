@@ -95,7 +95,7 @@ class BotCard extends StatelessWidget {
                     const Spacer(),
 
                     Text(
-                      '₽${bot.priceMonthly ?? 0}/мес',
+                      '\$${(bot.priceMonthly ?? 0).toStringAsFixed(0)}/мес',
                       style: const TextStyle(
                         color: AppColors.textPrimary,
                         fontWeight: FontWeight.bold,
@@ -111,7 +111,7 @@ class BotCard extends StatelessWidget {
                         onPressed: onConnect,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.accent,
-                          foregroundColor: Colors.white,
+                          foregroundColor: AppColors.surface,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),

@@ -34,7 +34,7 @@ flutter:
     - assets/images/
 
   fonts:
-    - family: Inter 18pt
+    - family: Inter
       fonts:
         - asset: assets/fonts/Inter_18pt-Regular.ttf
           weight: 400

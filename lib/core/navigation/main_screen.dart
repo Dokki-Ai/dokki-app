@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../theme/app_theme.dart';
 import '../../features/catalog/presentation/screens/catalog_screen.dart';
 import '../../features/my_bots/presentation/screens/my_bots_screen.dart';
@@ -45,19 +46,19 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.storefront_outlined),
+            icon: FaIcon(FontAwesomeIcons.store),
             label: 'Магазин',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.smart_toy_outlined),
+            icon: FaIcon(FontAwesomeIcons.robot),
             label: 'Мои боты',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings_outlined),
+            icon: FaIcon(FontAwesomeIcons.gear),
             label: 'Настройки',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.headset_mic_outlined),
+            icon: FaIcon(FontAwesomeIcons.headset),
             label: 'Поддержка',
           ),
         ],
