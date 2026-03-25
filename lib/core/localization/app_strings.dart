@@ -5,476 +5,89 @@ class AppStrings {
   const AppStrings(this.language);
 
   // --- Навигация ---
-  String get navShop {
-    switch (language) {
-      case AppLanguage.ru: return 'Магазин';
-      case AppLanguage.en: return 'Shop';
-      case AppLanguage.ar: return 'المتجر';
-    }
-  }
-
-  String get navMyBots {
-    switch (language) {
-      case AppLanguage.ru: return 'Мои боты';
-      case AppLanguage.en: return 'My Bots';
-      case AppLanguage.ar: return 'بوتاتي';
-    }
-  }
-
-  String get navSettings {
-    switch (language) {
-      case AppLanguage.ru: return 'Настройки';
-      case AppLanguage.en: return 'Settings';
-      case AppLanguage.ar: return 'الإعدادات';
-    }
-  }
-
-  String get navSupport {
-    switch (language) {
-      case AppLanguage.ru: return 'Поддержка';
-      case AppLanguage.en: return 'Support';
-      case AppLanguage.ar: return 'الدعم';
-    }
-  }
+  String get navShop => _map({AppLanguage.ru: 'Магазин', AppLanguage.en: 'Shop', AppLanguage.ar: 'المتجر'});
+  String get navMyBots => _map({AppLanguage.ru: 'Мои боты', AppLanguage.en: 'My Bots', AppLanguage.ar: 'بوتاتي'});
+  String get navSettings => _map({AppLanguage.ru: 'Настройки', AppLanguage.en: 'Settings', AppLanguage.ar: 'الإعدادات'});
+  String get navSupport => _map({AppLanguage.ru: 'Поддержка', AppLanguage.en: 'Support', AppLanguage.ar: 'الدعم'});
 
   // --- Auth ---
-  String get authLogin {
-    switch (language) {
-      case AppLanguage.ru: return 'Войти';
-      case AppLanguage.en: return 'Login';
-      case AppLanguage.ar: return 'تسجيل الدخول';
-    }
-  }
-
-  String get authRegistration {
-    switch (language) {
-      case AppLanguage.ru: return 'Регистрация';
-      case AppLanguage.en: return 'Registration';
-      case AppLanguage.ar: return 'إنشاء حساب';
-    }
-  }
-
-  String get authEmail {
-    switch (language) {
-      case AppLanguage.ru: return 'Email';
-      case AppLanguage.en: return 'Email';
-      case AppLanguage.ar: return 'البريد الإلكتروني';
-    }
-  }
-
-  String get authPassword {
-    switch (language) {
-      case AppLanguage.ru: return 'Пароль';
-      case AppLanguage.en: return 'Password';
-      case AppLanguage.ar: return 'كلمة المرور';
-    }
-  }
-
-  String get authForgotPassword {
-    switch (language) {
-      case AppLanguage.ru: return 'Забыли пароль?';
-      case AppLanguage.en: return 'Forgot password?';
-      case AppLanguage.ar: return 'هل نسيت كلمة المرور؟';
-    }
-  }
-
-  String get authNoAccount {
-    switch (language) {
-      case AppLanguage.ru: return 'Нет аккаунта? Регистрация';
-      case AppLanguage.en: return 'No account? Register';
-      case AppLanguage.ar: return 'ليس لديك حساب؟ سجل الآن';
-    }
-  }
-
-  String get authHasAccount {
-    switch (language) {
-      case AppLanguage.ru: return 'Уже есть аккаунт? Войти';
-      case AppLanguage.en: return 'Already have an account? Login';
-      case AppLanguage.ar: return 'لديك حساب بالفعل؟ دخول';
-    }
-  }
-
-  String get authGoogle {
-    switch (language) {
-      case AppLanguage.ru: return 'Войти через Google';
-      case AppLanguage.en: return 'Sign in with Google';
-      case AppLanguage.ar: return 'تسجيل الدخول عبر Google';
-    }
-  }
-
-  String get authApple {
-    switch (language) {
-      case AppLanguage.ru: return 'Sign in with Apple';
-      case AppLanguage.en: return 'Sign in with Apple';
-      case AppLanguage.ar: return 'تسجيل الدخول عبر Apple';
-    }
-  }
-
-  String get authFieldsRequired {
-    switch (language) {
-      case AppLanguage.ru: return 'Заполните все поля';
-      case AppLanguage.en: return 'Fill all fields';
-      case AppLanguage.ar: return 'يرجى ملء جميع الحقول';
-    }
-  }
-
-  String get authCheckEmail {
-    switch (language) {
-      case AppLanguage.ru: return 'Проверьте почту для подтверждения';
-      case AppLanguage.en: return 'Check your email for confirmation';
-      case AppLanguage.ar: return 'تحقق من بريدك الإلكتروني للتأكيد';
-    }
-  }
-
-  String get authError {
-    switch (language) {
-      case AppLanguage.ru: return 'Произошла ошибка';
-      case AppLanguage.en: return 'An error occurred';
-      case AppLanguage.ar: return 'حدث خطأ ما';
-    }
-  }
-
-  String get authOr {
-    switch (language) {
-      case AppLanguage.ru: return 'или';
-      case AppLanguage.en: return 'or';
-      case AppLanguage.ar: return 'أو';
-    }
-  }
+  String get authLogin => _map({AppLanguage.ru: 'Войти', AppLanguage.en: 'Login', AppLanguage.ar: 'تسجيل الدخول'});
+  String get authRegistration => _map({AppLanguage.ru: 'Регистрация', AppLanguage.en: 'Registration', AppLanguage.ar: 'إنشاء حساب'});
+  String get authPassword => _map({AppLanguage.ru: 'Пароль', AppLanguage.en: 'Password', AppLanguage.ar: 'كلمة المرور'});
+  String get authForgotPassword => _map({AppLanguage.ru: 'Забыли пароль?', AppLanguage.en: 'Forgot password?', AppLanguage.ar: 'هل نسيت كلمة المرور؟'});
+  String get authNoAccount => _map({AppLanguage.ru: 'Нет аккаунта? Регистрация', AppLanguage.en: 'No account? Register', AppLanguage.ar: 'ليس لديك حساب؟ سجل الآن'});
+  String get authHasAccount => _map({AppLanguage.ru: 'Уже есть аккаунт? Войти', AppLanguage.en: 'Already have an account? Login', AppLanguage.ar: 'لديك حساب بالفعل؟ دخول'});
+  String get authGoogle => _map({AppLanguage.ru: 'Войти через Google', AppLanguage.en: 'Sign in with Google', AppLanguage.ar: 'تسجيل الدخول عبر Google'});
+  String get authFieldsRequired => _map({AppLanguage.ru: 'Заполните все поля', AppLanguage.en: 'Fill all fields', AppLanguage.ar: 'يرجى ملء جميع الحقول'});
+  String get authCheckEmail => _map({AppLanguage.ru: 'Проверьте почту для подтверждения', AppLanguage.en: 'Check your email for confirmation', AppLanguage.ar: 'تحقق من بريدك الإلكتروني للتأكيد'});
+  String get authError => _map({AppLanguage.ru: 'Произошла ошибка', AppLanguage.en: 'An error occurred', AppLanguage.ar: 'حدث خطأ ما'});
+  String get authOr => _map({AppLanguage.ru: 'или', AppLanguage.en: 'or', AppLanguage.ar: 'أو'});
 
   // --- Каталог ---
-  String get catDetails {
-    switch (language) {
-      case AppLanguage.ru: return 'Подробнее';
-      case AppLanguage.en: return 'Details';
-      case AppLanguage.ar: return 'المزيد';
-    }
-  }
-
-  String get catDescription {
-    switch (language) {
-      case AppLanguage.ru: return 'Описание';
-      case AppLanguage.en: return 'Description';
-      case AppLanguage.ar: return 'الوصف';
-    }
-  }
-
-  String get catFunctions {
-    switch (language) {
-      case AppLanguage.ru: return 'Функции';
-      case AppLanguage.en: return 'Functions';
-      case AppLanguage.ar: return 'الميزات';
-    }
-  }
-
-  String get catEmpty {
-    switch (language) {
-      case AppLanguage.ru: return 'Список пуст';
-      case AppLanguage.en: return 'List is empty';
-      case AppLanguage.ar: return 'القائمة فارغة';
-    }
-  }
+  String get catDetails => _map({AppLanguage.ru: 'Подробнее', AppLanguage.en: 'Details', AppLanguage.ar: 'المزيد'});
+  String get catDescription => _map({AppLanguage.ru: 'Описание', AppLanguage.en: 'Description', AppLanguage.ar: 'الوصف'});
+  String get catFunctions => _map({AppLanguage.ru: 'Функции', AppLanguage.en: 'Functions', AppLanguage.ar: 'الميزات'});
+  String get catEmpty => _map({AppLanguage.ru: 'Список пуст', AppLanguage.en: 'List is empty', AppLanguage.ar: 'القائمة فارغة'});
 
   // --- BotDetail ---
-  String get botConnect {
-    switch (language) {
-      case AppLanguage.ru: return 'Подключить';
-      case AppLanguage.en: return 'Connect';
-      case AppLanguage.ar: return 'اتصال';
-    }
-  }
+  String get botConnect => _map({AppLanguage.ru: 'Подключить', AppLanguage.en: 'Connect', AppLanguage.ar: 'اتصال'});
 
   // --- Payment ---
-  String get payMonth {
-    switch (language) {
-      case AppLanguage.ru: return 'месяц';
-      case AppLanguage.en: return 'month';
-      case AppLanguage.ar: return 'شهر';
-    }
-  }
+  String get paySubscription => _map({AppLanguage.ru: 'Подписка', AppLanguage.en: 'Subscription', AppLanguage.ar: 'اشتراك'});
+  String get payMonth => _map({AppLanguage.ru: 'месяц', AppLanguage.en: 'month', AppLanguage.ar: 'شهر'});
+  String get payYear => _map({AppLanguage.ru: 'год', AppLanguage.en: 'year', AppLanguage.ar: 'سنة'});
+  String get payAction => _map({AppLanguage.ru: 'ПОДКЛЮЧИТЬ ЗА', AppLanguage.en: 'CONNECT FOR', AppLanguage.ar: 'اتصال مقابل'});
+  String get paySuccessTitle => _map({AppLanguage.ru: 'Оплата успешна', AppLanguage.en: 'Payment successful', AppLanguage.ar: 'تم الدفع بنجاح'});
+  String get paySuccessBody => _map({AppLanguage.ru: 'Подписка активирована (тестовый режим)', AppLanguage.en: 'Subscription activated (test mode)', AppLanguage.ar: 'تم تفعيل الاشتراك (وضع الاختبار)'});
+  String get payContinue => _map({AppLanguage.ru: 'Продолжить', AppLanguage.en: 'Continue', AppLanguage.ar: 'استمرار'});
 
-  String get payYear {
-    switch (language) {
-      case AppLanguage.ru: return 'год';
-      case AppLanguage.en: return 'year';
-      case AppLanguage.ar: return 'سنة';
-    }
-  }
-
-  String get payAction {
-    switch (language) {
-      case AppLanguage.ru: return 'Оплатить';
-      case AppLanguage.en: return 'Pay';
-      case AppLanguage.ar: return 'دفع';
-    }
-  }
-
-  // --- MyBots ---
-  String get myBotsLocked {
-    switch (language) {
-      case AppLanguage.ru: return 'Войдите чтобы увидеть ваших ботов';
-      case AppLanguage.en: return 'Login to see your bots';
-      case AppLanguage.ar: return 'سجل الدخول لرؤية بوتاتك';
-    }
-  }
-
-  String get myBotsEmpty {
-    switch (language) {
-      case AppLanguage.ru: return 'У вас пока нет подключённых ботов';
-      case AppLanguage.en: return 'You have no connected bots yet';
-      case AppLanguage.ar: return 'ليس لديك بوتات متصلة بعد';
-    }
-  }
-
-  String get myBotsGoCatalog {
-    switch (language) {
-      case AppLanguage.ru: return 'Перейти в каталог';
-      case AppLanguage.en: return 'Go to catalog';
-      case AppLanguage.ar: return 'الذهاب إلى المتجر';
-    }
-  }
+  // --- MyBots & BusinessCard ---
+  String get myBotsLocked => _map({AppLanguage.ru: 'Войдите чтобы увидеть ваших ботов', AppLanguage.en: 'Login to see your bots', AppLanguage.ar: 'سجل الدخول لرؤية بوتاتك'});
+  String get myBotsEmpty => _map({AppLanguage.ru: 'У вас пока нет подключённых ботов', AppLanguage.en: 'You have no connected bots yet', AppLanguage.ar: 'ليس لديك بوتات متصلة بعد'});
+  String get myBotsGoCatalog => _map({AppLanguage.ru: 'Перейти в каталог', AppLanguage.en: 'Go to catalog', AppLanguage.ar: 'الذهاب إلى المتجر'});
+  String get bmManage => _map({AppLanguage.ru: 'Управление', AppLanguage.en: 'Manage', AppLanguage.ar: 'إدارة'});
+  String get bmStatusOff => _map({AppLanguage.ru: 'Отключён', AppLanguage.en: 'Disabled', AppLanguage.ar: 'معطل'});
+  String get bmStatusActive => _map({AppLanguage.ru: 'В работе', AppLanguage.en: 'Active', AppLanguage.ar: 'قيد العمل'});
+  String get bmStatusSetup => _map({AppLanguage.ru: 'Настройка', AppLanguage.en: 'Setup', AppLanguage.ar: 'إعداد'});
 
   // --- Settings ---
-  String get setAccount {
-    switch (language) {
-      case AppLanguage.ru: return 'Аккаунт';
-      case AppLanguage.en: return 'Account';
-      case AppLanguage.ar: return 'الحساب';
-    }
-  }
-
-  String get setLanguage {
-    switch (language) {
-      case AppLanguage.ru: return 'Язык';
-      case AppLanguage.en: return 'Language';
-      case AppLanguage.ar: return 'اللغة';
-    }
-  }
-
-  String get setNotifications {
-    switch (language) {
-      case AppLanguage.ru: return 'Уведомления';
-      case AppLanguage.en: return 'Notifications';
-      case AppLanguage.ar: return 'الإشعارات';
-    }
-  }
-
-  String get setAbout {
-    switch (language) {
-      case AppLanguage.ru: return 'О приложении';
-      case AppLanguage.en: return 'About app';
-      case AppLanguage.ar: return 'حول التطبيق';
-    }
-  }
-
-  String get setVersion {
-    switch (language) {
-      case AppLanguage.ru: return 'Версия';
-      case AppLanguage.en: return 'Version';
-      case AppLanguage.ar: return 'الإصدار';
-    }
-  }
-
-  String get setNotifSettings {
-    switch (language) {
-      case AppLanguage.ru: return 'Настройки уведомлений';
-      case AppLanguage.en: return 'Notification settings';
-      case AppLanguage.ar: return 'إعدادات الإشعارات';
-    }
-  }
+  String get setAccount => _map({AppLanguage.ru: 'Аккаунт', AppLanguage.en: 'Account', AppLanguage.ar: 'الحساب'});
+  String get setLanguage => _map({AppLanguage.ru: 'Язык', AppLanguage.en: 'Language', AppLanguage.ar: 'اللغة'});
+  String get setNotifications => _map({AppLanguage.ru: 'Уведомления', AppLanguage.en: 'Notifications', AppLanguage.ar: 'الإشعارات'});
+  String get setAbout => _map({AppLanguage.ru: 'О приложении', AppLanguage.en: 'About app', AppLanguage.ar: 'حول التطبيق'});
+  String get setVersion => _map({AppLanguage.ru: 'Версия', AppLanguage.en: 'Version', AppLanguage.ar: 'الإصدار'});
+  String get setNotifSettings => _map({AppLanguage.ru: 'Настройки уведомлений', AppLanguage.en: 'Notification settings', AppLanguage.ar: 'إعدادات الإشعارات'});
 
   // --- Profile ---
-  String get profTitle {
-    switch (language) {
-      case AppLanguage.ru: return 'Профиль';
-      case AppLanguage.en: return 'Profile';
-      case AppLanguage.ar: return 'الملف الشخصي';
-    }
-  }
-
-  String get profChangePass {
-    switch (language) {
-      case AppLanguage.ru: return 'Сменить пароль';
-      case AppLanguage.en: return 'Change password';
-      case AppLanguage.ar: return 'تغيير كلمة المرور';
-    }
-  }
-
-  String get profLogout {
-    switch (language) {
-      case AppLanguage.ru: return 'Выйти из аккаунта';
-      case AppLanguage.en: return 'Sign out';
-      case AppLanguage.ar: return 'تسجيل الخروج';
-    }
-  }
-
-  String get profCurrentPass {
-    switch (language) {
-      case AppLanguage.ru: return 'Текущий пароль';
-      case AppLanguage.en: return 'Current password';
-      case AppLanguage.ar: return 'كلمة المرور الحالية';
-    }
-  }
-
-  String get profNewPass {
-    switch (language) {
-      case AppLanguage.ru: return 'Новый пароль';
-      case AppLanguage.en: return 'New password';
-      case AppLanguage.ar: return 'كلمة المرور الجديدة';
-    }
-  }
-
-  String get profRepeatPass {
-    switch (language) {
-      case AppLanguage.ru: return 'Повторите новый пароль';
-      case AppLanguage.en: return 'Repeat new password';
-      case AppLanguage.ar: return 'تأكيد كلمة المرور الجديدة';
-    }
-  }
-
-  String get profCancel {
-    switch (language) {
-      case AppLanguage.ru: return 'Отмена';
-      case AppLanguage.en: return 'Cancel';
-      case AppLanguage.ar: return 'إلغاء';
-    }
-  }
-
-  String get profSave {
-    switch (language) {
-      case AppLanguage.ru: return 'Сохранить';
-      case AppLanguage.en: return 'Save';
-      case AppLanguage.ar: return 'حفظ';
-    }
-  }
-
-  String get profPassMismatch {
-    switch (language) {
-      case AppLanguage.ru: return 'Пароли не совпадают';
-      case AppLanguage.en: return 'Passwords do not match';
-      case AppLanguage.ar: return 'كلمات المرور غير متطابقة';
-    }
-  }
-
-  String get profPassLength {
-    switch (language) {
-      case AppLanguage.ru: return 'Пароль должен быть минимум 6 символов';
-      case AppLanguage.en: return 'Password must be at least 6 characters';
-      case AppLanguage.ar: return 'يجب أن تتكون كلمة المرور من 6 أحرف на الأقل';
-    }
-  }
-
-  String get profPassSuccess {
-    switch (language) {
-      case AppLanguage.ru: return 'Пароль успешно изменён';
-      case AppLanguage.en: return 'Password changed successfully';
-      case AppLanguage.ar: return 'تم تغيير كلمة المرور بنجاح';
-    }
-  }
+  String get profTitle => _map({AppLanguage.ru: 'Профиль', AppLanguage.en: 'Profile', AppLanguage.ar: 'الملف الشخصي'});
+  String get profChangePass => _map({AppLanguage.ru: 'Сменить пароль', AppLanguage.en: 'Change password', AppLanguage.ar: 'تغيير كلمة المرور'});
+  String get profLogout => _map({AppLanguage.ru: 'Выйти из аккаунта', AppLanguage.en: 'Sign out', AppLanguage.ar: 'تسجيل الخروج'});
+  String get profCurrentPass => _map({AppLanguage.ru: 'Текущий пароль', AppLanguage.en: 'Current password', AppLanguage.ar: 'كلمة المرور الحالية'});
+  String get profNewPass => _map({AppLanguage.ru: 'Новый пароль', AppLanguage.en: 'New password', AppLanguage.ar: 'كلمة المرور الجديدة'});
+  String get profRepeatPass => _map({AppLanguage.ru: 'Повторите новый пароль', AppLanguage.en: 'Repeat new password', AppLanguage.ar: 'تأكيد كلمة المرور الجديدة'});
+  String get profCancel => _map({AppLanguage.ru: 'Отмена', AppLanguage.en: 'Cancel', AppLanguage.ar: 'إلغاء'});
+  String get profSave => _map({AppLanguage.ru: 'Сохранить', AppLanguage.en: 'Save', AppLanguage.ar: 'حفظ'});
+  String get profPassMismatch => _map({AppLanguage.ru: 'Пароли не совпадают', AppLanguage.en: 'Passwords do not match', AppLanguage.ar: 'كلمات المرور غير متطابقة'});
+  String get profPassLength => _map({AppLanguage.ru: 'Пароль должен быть минимум 6 символов', AppLanguage.en: 'Password must be at least 6 characters', AppLanguage.ar: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل'});
+  String get profPassSuccess => _map({AppLanguage.ru: 'Пароль успешно изменён', AppLanguage.en: 'Password changed successfully', AppLanguage.ar: 'تم تغيير كلمة المرور بنجاح'});
 
   // --- Notifications ---
-  String get notifPush {
-    switch (language) {
-      case AppLanguage.ru: return 'Push-уведомления';
-      case AppLanguage.en: return 'Push notifications';
-      case AppLanguage.ar: return 'إشعارات الدفع';
-    }
-  }
-
-  String get notifPushSub {
-    switch (language) {
-      case AppLanguage.ru: return 'Получать уведомления на устройство';
-      case AppLanguage.en: return 'Receive notifications on device';
-      case AppLanguage.ar: return 'تلقي الإشعارات على الجهاز';
-    }
-  }
-
-  String get notifEmail {
-    switch (language) {
-      case AppLanguage.ru: return 'Email-уведомления';
-      case AppLanguage.en: return 'Email notifications';
-      case AppLanguage.ar: return 'إشعارات البريد';
-    }
-  }
-
-  String get notifEmailSub {
-    switch (language) {
-      case AppLanguage.ru: return 'Получать уведомления на почту';
-      case AppLanguage.en: return 'Receive notifications by email';
-      case AppLanguage.ar: return 'تلقي الإشعارات عبر البريد';
-    }
-  }
+  String get notifPush => _map({AppLanguage.ru: 'Push-уведомления', AppLanguage.en: 'Push notifications', AppLanguage.ar: 'إشعارات الدفع'});
+  String get notifPushSub => _map({AppLanguage.ru: 'Получать уведомления на устройство', AppLanguage.en: 'Receive notifications on device', AppLanguage.ar: 'تلقي الإشعارات على الجهاز'});
+  String get notifEmail => _map({AppLanguage.ru: 'Email-уведомления', AppLanguage.en: 'Email notifications', AppLanguage.ar: 'إشعارات البريد'});
+  String get notifEmailSub => _map({AppLanguage.ru: 'Получать уведомления на почту', AppLanguage.en: 'Receive notifications by email', AppLanguage.ar: 'تلقي الإشعارات عبر البريد'});
 
   // --- BotManagement ---
-  String get bmTitle {
-    switch (language) {
-      case AppLanguage.ru: return 'Управление ботом';
-      case AppLanguage.en: return 'Bot management';
-      case AppLanguage.ar: return 'إدارة البوت';
-    }
-  }
+  String get bmTitle => _map({AppLanguage.ru: 'Управление ботом', AppLanguage.en: 'Bot management', AppLanguage.ar: 'إدارة البوت'});
+  String get bmActions => _map({AppLanguage.ru: 'ДЕЙСТВИЯ', AppLanguage.en: 'ACTIONS', AppLanguage.ar: 'الإجراءات'});
+  String get bmAppointments => _map({AppLanguage.ru: 'ЗАПИСИ', AppLanguage.en: 'APPOINTMENTS', AppLanguage.ar: 'السجلات'});
+  String get bmPromptSettings => _map({AppLanguage.ru: 'НАСТРОЙКИ ПРОМПТА', AppLanguage.en: 'PROMPT SETTINGS', AppLanguage.ar: 'إعدادات الأوامр'});
+  String get bmActivateGroup => _map({AppLanguage.ru: 'АКТИВИРОВАТЬ ГРУППУ', AppLanguage.en: 'ACTIVATE GROUP', AppLanguage.ar: 'تفعيل المجموعة'});
+  String get bmActive => _map({AppLanguage.ru: 'Бот активен', AppLanguage.en: 'Bot active', AppLanguage.ar: 'البوت مفعل'});
+  String get bmSetupRequired => _map({AppLanguage.ru: 'Требуется настройка', AppLanguage.en: 'Setup required', AppLanguage.ar: 'مطلوب إعداد'});
+  String get bmReady => _map({AppLanguage.ru: 'Бот готов к приему заказов', AppLanguage.en: 'Bot ready for orders', AppLanguage.ar: 'البوت جاهز لتلقي الطلبات'});
+  String get bmBindGroup => _map({AppLanguage.ru: 'Привяжите Telegram группу', AppLanguage.en: 'Bind Telegram group', AppLanguage.ar: 'ربط مجموعة تيليجرام'});
 
-  String get bmActions {
-    switch (language) {
-      case AppLanguage.ru: return 'ДЕЙСТВИЯ';
-      case AppLanguage.en: return 'ACTIONS';
-      case AppLanguage.ar: return 'الإجراءات';
-    }
-  }
-
-  String get bmAppointments {
-    switch (language) {
-      case AppLanguage.ru: return 'ЗАПИСИ';
-      case AppLanguage.en: return 'APPOINTMENTS';
-      case AppLanguage.ar: return 'السجلات';
-    }
-  }
-
-  String get bmPromptSettings {
-    switch (language) {
-      case AppLanguage.ru: return 'НАСТРОЙКИ ПРОМПТА';
-      case AppLanguage.en: return 'PROMPT SETTINGS';
-      case AppLanguage.ar: return 'إعدادات الأوامر';
-    }
-  }
-
-  String get bmActivateGroup {
-    switch (language) {
-      case AppLanguage.ru: return 'АКТИВИРОВАТЬ ГРУППУ';
-      case AppLanguage.en: return 'ACTIVATE GROUP';
-      case AppLanguage.ar: return 'تفعيل المجموعة';
-    }
-  }
-
-  String get bmActive {
-    switch (language) {
-      case AppLanguage.ru: return 'Бот активен';
-      case AppLanguage.en: return 'Bot active';
-      case AppLanguage.ar: return 'البوت مفعل';
-    }
-  }
-
-  String get bmSetupRequired {
-    switch (language) {
-      case AppLanguage.ru: return 'Требуется настройка';
-      case AppLanguage.en: return 'Setup required';
-      case AppLanguage.ar: return 'مطلوب إعداد';
-    }
-  }
-
-  String get bmReady {
-    switch (language) {
-      case AppLanguage.ru: return 'Бот готов к приему заказов';
-      case AppLanguage.en: return 'Bot ready for orders';
-      case AppLanguage.ar: return 'البوت جاهز لتلقي الطلبات';
-    }
-  }
-
-  String get bmBindGroup {
-    switch (language) {
-      case AppLanguage.ru: return 'Привяжите Telegram группу';
-      case AppLanguage.en: return 'Bind Telegram group';
-      case AppLanguage.ar: return 'ربط مجموعة تيليجرام';
-    }
-  }
+  // Вспомогательный метод
+  String _map(Map<AppLanguage, String> values) => values[language] ?? values[AppLanguage.ru]!;
 }

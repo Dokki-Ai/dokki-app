@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../core/theme/app_theme.dart';
-// Путь к модели в другом модуле
+import '../../../../core/localization/language_provider.dart';
+import '../../../../core/localization/app_strings.dart';
 import '../../../bot_management/domain/business.dart';
 
-class BusinessCard extends StatelessWidget {
+class BusinessCard extends ConsumerWidget {
   final Business business;
   final VoidCallback onManage;
 
@@ -15,8 +17,9 @@ class BusinessCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    // Маппинг для Storage: dokki-admin -> bot_admin
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AppStrings s = ref.watch(stringsProvider);
+    
     final botImageName = business.botId.replaceAll('dokki-', 'bot_');
     final imageUrl =
         'https://cjjdkrsqrtfirywrmrxu.supabase.co/storage/v1/object/public/bot-images/$botImageName.png';
@@ -40,7 +43,6 @@ class BusinessCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // ЛЕВЫЙ БЛОК: Иллюстрация 160x160
             SizedBox(
               width: 160,
               height: 160,
@@ -74,14 +76,12 @@ class BusinessCard extends StatelessWidget {
               ),
             ),
 
-            // ПРАВЫЙ БЛОК: Контент с padding 12
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // 1. Название
                     Text(
                       _formatBotId(business.botId),
                       style: const TextStyle(
@@ -89,30 +89,27 @@ class BusinessCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
                         letterSpacing: 0.2,
-                        fontFamily: 'Inter 18pt',
+                        fontFamily: 'Inter',
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 2),
 
-                    // 2. Специализация (Маппинг)
                     Text(
                       _getBotCategory(business.botId),
                       style: const TextStyle(
                         fontSize: 13,
                         color: AppColors.textSecondary,
-                        fontFamily: 'Inter 18pt',
+                        fontFamily: 'Inter',
                       ),
                     ),
                     const SizedBox(height: 4),
 
-                    // 3. Статус (Точка + Текст)
-                    _buildStatusRow(),
+                    _buildStatusRow(s),
 
                     const Spacer(),
 
-                    // 4. Кнопка Управление
                     SizedBox(
                       width: double.infinity,
                       height: 32,
@@ -126,12 +123,12 @@ class BusinessCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: const Text(
-                          'Управление',
-                          style: TextStyle(
+                        child: Text(
+                          s.bmManage,
+                          style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            fontFamily: 'Inter 18pt',
+                            fontFamily: 'Inter',
                           ),
                         ),
                       ),
@@ -146,7 +143,6 @@ class BusinessCard extends StatelessWidget {
     );
   }
 
-  // Форматирование ID (dokki-sales -> Dokki Sales)
   String _formatBotId(String botId) {
     if (botId.isEmpty) return 'Робот';
     return botId
@@ -155,7 +151,6 @@ class BusinessCard extends StatelessWidget {
         .join(' ');
   }
 
-  // Маппинг специализаций
   String _getBotCategory(String botId) {
     const categoryMap = {
       'dokki-admin': 'Администратор',
@@ -165,21 +160,20 @@ class BusinessCard extends StatelessWidget {
     return categoryMap[botId.trim()] ?? '';
   }
 
-  // Логика статуса
-  Widget _buildStatusRow() {
+  Widget _buildStatusRow(AppStrings s) {
     Color dotColor;
     String statusText;
 
     if (business.status == 'active' && business.telegramGroupId != null) {
       dotColor = AppColors.success;
-      statusText = 'В работе';
+      statusText = s.bmStatusActive;
     } else if (business.status == 'active' &&
         business.telegramGroupId == null) {
       dotColor = AppColors.warning;
-      statusText = 'Настройка';
+      statusText = s.bmStatusSetup;
     } else {
       dotColor = AppColors.error;
-      statusText = 'Отключён';
+      statusText = s.bmStatusOff;
     }
 
     return Row(
@@ -198,7 +192,7 @@ class BusinessCard extends StatelessWidget {
           style: const TextStyle(
             fontSize: 13,
             color: AppColors.textSecondary,
-            fontFamily: 'Inter 18pt',
+            fontFamily: 'Inter',
           ),
         ),
       ],

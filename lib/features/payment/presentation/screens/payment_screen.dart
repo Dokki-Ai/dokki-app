@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/localization/language_provider.dart';
+import '../../../../core/localization/app_strings.dart';
 
-class PaymentScreen extends StatefulWidget {
+class PaymentScreen extends ConsumerStatefulWidget {
   final String botId;
   final String botName;
   final String botDescription;
@@ -19,27 +22,31 @@ class PaymentScreen extends StatefulWidget {
   });
 
   @override
-  State<PaymentScreen> createState() => _PaymentScreenState();
+  ConsumerState<PaymentScreen> createState() => _PaymentScreenState();
 }
 
-class _PaymentScreenState extends State<PaymentScreen> {
+class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   String _selectedPlan = 'yearly';
+  late AppStrings _s;
 
   void _showPaymentSuccess() {
     showDialog(
       context: context,
       builder: (c) => AlertDialog(
-        title: const Text('Оплата успешна'),
-        content: const Text('Подписка активирована (тестовый режим)'),
+        backgroundColor: AppColors.surface,
+        title: Text(_s.paySuccessTitle, 
+            style: const TextStyle(color: AppColors.textPrimary)),
+        content: Text(_s.paySuccessBody, 
+            style: const TextStyle(color: AppColors.textSecondary)),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(c);
-              // Переход через GoRouter для чистоты навигации
               context.pushReplacement(
                   '/connect-bot/${widget.botId}/${widget.botName}');
             },
-            child: const Text('Продолжить'),
+            child: Text(_s.payContinue, 
+                style: const TextStyle(color: AppColors.accent, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -48,6 +55,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final AppStrings s = ref.watch(stringsProvider);
+    _s = s;
+
     final double savings = (widget.priceMonthly * 12) - widget.priceYearly;
     final int savingsPercent =
         (((widget.priceMonthly * 12) - widget.priceYearly) /
@@ -60,7 +70,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text('Подписка', style: Theme.of(context).textTheme.titleMedium),
+        title: Text(s.paySubscription, style: Theme.of(context).textTheme.titleMedium),
         backgroundColor: AppColors.surface,
         elevation: 0,
         leading: const BackButton(color: AppColors.textPrimary),
@@ -81,17 +91,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
             const SizedBox(height: 32),
             _buildPlanCard(
               id: 'monthly',
-              title: 'Месяц',
+              title: s.payMonth[0].toUpperCase() + s.payMonth.substring(1),
               price: '\$${widget.priceMonthly.toStringAsFixed(2)}',
-              period: '/мес',
+              period: '/${s.payMonth}',
+              s: s,
             ),
             const SizedBox(height: 16),
             _buildPlanCard(
               id: 'yearly',
-              title: 'Год',
+              title: s.payYear[0].toUpperCase() + s.payYear.substring(1),
               price: '\$${widget.priceYearly.toStringAsFixed(2)}',
-              period: '/год',
+              period: '/${s.payYear}',
               subtitle: 'Экономия \$$savings ($savingsPercent%)',
+              s: s,
             ),
             const SizedBox(height: 40),
             SizedBox(
@@ -100,7 +112,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               child: ElevatedButton(
                 onPressed: _showPaymentSuccess,
                 child:
-                    Text('ПОДКЛЮЧИТЬ ЗА \$${currentPrice.toStringAsFixed(2)}'),
+                    Text('${s.payAction} \$${currentPrice.toStringAsFixed(2)}'),
               ),
             ),
           ],
@@ -114,6 +126,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     required String title,
     required String price,
     required String period,
+    required AppStrings s,
     String? subtitle,
   }) {
     final bool isSelected = _selectedPlan == id;
@@ -154,7 +167,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     Text(subtitle,
                         style: const TextStyle(
                             fontSize: 12,
-                            color: Colors.green,
+                            color: AppColors.success,
                             fontWeight: FontWeight.bold)),
                   ],
                 ],
