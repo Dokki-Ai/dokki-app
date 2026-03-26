@@ -14,10 +14,23 @@ final allBotsProvider = FutureProvider<List<Bot>>((ref) async {
   return (response as List).map((json) => Bot.fromJson(json)).toList();
 });
 
-/// Провайдер для получения только базовых версий ботов (для основного каталога)
+/// Провайдер для получения только базовых версий ботов с кастомной сортировкой
 final botsProvider = FutureProvider<List<Bot>>((ref) async {
   final allBots = await ref.watch(allBotsProvider.future);
-  return allBots.where((bot) => bot.tier == 'basic').toList();
+
+  // Фильтруем только Basic уровни
+  final basicBots = allBots.where((bot) => bot.tier == 'basic').toList();
+
+  // Сортировка по приоритету категории: admin (1) → sales (2) → support (3)
+  final categoryOrder = {'admin': 1, 'sales': 2, 'support': 3};
+
+  basicBots.sort((a, b) {
+    final priorityA = categoryOrder[a.categoryKey] ?? 999;
+    final priorityB = categoryOrder[b.categoryKey] ?? 999;
+    return priorityA.compareTo(priorityB);
+  });
+
+  return basicBots;
 });
 
 /// Провайдер конкретного бота по его ID
@@ -30,10 +43,10 @@ final botByIdProvider = FutureProvider.family<Bot?, String>((ref, id) async {
   }
 });
 
-/// Провайдер всех ботов одной категории (для выбора тарифов/уровней в деталях бота)
+/// Провайдер всех ботов одной категории (для выбора тарифов в деталях)
 final botsByCategoryProvider =
     FutureProvider.family<List<Bot>, String>((ref, category) async {
   final bots = await ref.watch(allBotsProvider.future);
-  // Используем categoryKey для точного сравнения по ключу (admin, sales, support)
+  // Используем categoryKey для точного сравнения
   return bots.where((bot) => bot.categoryKey == category).toList();
 });

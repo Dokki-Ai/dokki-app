@@ -51,8 +51,8 @@ class CatalogScreen extends ConsumerWidget {
 
               return BotCard(
                 bot: bot,
-                onConnect: () =>
-                    context.push('/bot-detail/${bot.id}', extra: bot),
+                // Передаем categoryKey (admin/sales/support) вместо bot.id
+                onConnect: () => context.push('/bot-detail/${bot.categoryKey}'),
               );
             },
           );
