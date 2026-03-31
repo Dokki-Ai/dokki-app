@@ -22,7 +22,8 @@ class Business {
   final String? openaiKey;
   final String? telegramGroupId;
   final String? botBusinessId;
-  final int? alertsTopicId; // Новое поле
+  final int? alertsTopicId;
+  final String? systemPrompt; // 1. Новое поле
 
   // Поля из каталога
   final String? specialization;
@@ -47,6 +48,7 @@ class Business {
     this.telegramGroupId,
     this.botBusinessId,
     this.alertsTopicId,
+    this.systemPrompt, // 2. В конструктор
     this.specialization,
     this.tier,
   });
@@ -96,7 +98,8 @@ class Business {
       openaiKey: json['openai_key'] as String?,
       telegramGroupId: json['telegram_group_id'] as String?,
       botBusinessId: json['bot_business_id'] as String?,
-      alertsTopicId: json['alerts_topic_id'] as int?, // Парсинг
+      alertsTopicId: json['alerts_topic_id'] as int?,
+      systemPrompt: json['system_prompt'] as String?, // 3. В fromJson
       specialization: json['specialization'] as String?,
       tier: json['tier'] as String?,
     );
@@ -121,6 +124,7 @@ class Business {
     String? telegramGroupId,
     String? botBusinessId,
     int? alertsTopicId,
+    String? systemPrompt, // 4. В copyWith
     String? specialization,
     String? tier,
   }) {
@@ -143,6 +147,7 @@ class Business {
       telegramGroupId: telegramGroupId ?? this.telegramGroupId,
       botBusinessId: botBusinessId ?? this.botBusinessId,
       alertsTopicId: alertsTopicId ?? this.alertsTopicId,
+      systemPrompt: systemPrompt ?? this.systemPrompt, // 4. В return
       specialization: specialization ?? this.specialization,
       tier: tier ?? this.tier,
     );

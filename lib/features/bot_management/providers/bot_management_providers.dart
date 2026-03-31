@@ -6,6 +6,8 @@ import '../data/business_repository_impl.dart';
 import '../data/telegram_repository.dart';
 import '../data/appointments_repository.dart';
 import '../data/bot_config_repository.dart';
+import '../data/bot_prompt_repository.dart';
+import '../data/price_list_repository.dart'; // Задача 18: Импорт репозитория прайсов
 
 // 1. Провайдер Telegram API
 final telegramRepositoryProvider = Provider<TelegramRepository>((ref) {
@@ -17,7 +19,7 @@ final businessRepositoryProvider = Provider<BusinessRepository>((ref) {
   return BusinessRepositoryImpl(ref.watch(supabaseClientProvider));
 });
 
-// 3. Провайдер списка подключенных ботов (теперь с JOIN внутри репозитория)
+// 3. Провайдер списка подключенных ботов
 final connectedBotsProvider =
     FutureProvider.autoDispose<List<Business>>((ref) async {
   final repository = ref.watch(businessRepositoryProvider);
@@ -49,4 +51,14 @@ final botConfigProvider =
         (ref, business) async {
   final businessId = business.id;
   return ref.watch(botConfigRepositoryProvider).getConfig(businessId);
+});
+
+// 8. Провайдер репозитория промптов
+final botPromptRepositoryProvider = Provider<BotPromptRepository>((ref) {
+  return BotPromptRepository();
+});
+
+// 9. Провайдер репозитория прайс-листов (Задача 18)
+final priceListRepositoryProvider = Provider<PriceListRepository>((ref) {
+  return PriceListRepository();
 });

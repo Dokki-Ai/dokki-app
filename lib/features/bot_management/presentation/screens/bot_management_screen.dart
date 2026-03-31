@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:file_picker/file_picker.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/localization/language_provider.dart';
-import '../../../../core/localization/app_strings.dart';
 import '../../domain/business.dart';
-import 'appointments_screen.dart';
-import 'bot_config_screen.dart';
+import '../../providers/bot_management_providers.dart';
+import '../../data/price_parser.dart'; // Задача 19: Импорт парсера
 
-class BotManagementScreen extends ConsumerWidget {
+class BotManagementScreen extends ConsumerStatefulWidget {
   final Business business;
 
   const BotManagementScreen({
@@ -16,161 +16,270 @@ class BotManagementScreen extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final bool isActivated = business.telegramGroupId != null;
-    final s = ref.watch(stringsProvider);
+  ConsumerState<BotManagementScreen> createState() =>
+      _BotManagementScreenState();
+}
 
+class _BotManagementScreenState extends ConsumerState<BotManagementScreen> {
+  late final TextEditingController _promptController;
+  bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _promptController = TextEditingController(
+      text: widget.business.systemPrompt ?? '',
+    );
+  }
+
+  @override
+  void dispose() {
+    _promptController.dispose();
+    super.dispose();
+  }
+
+  // Обновленный метод выбора и автоматической загрузки файла (Задача 19)
+  Future<void> _pickPriceFile() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['xlsx', 'xls', 'csv'],
+    );
+
+    if (result == null || result.files.single.path == null) return;
+
+    setState(() => _isSaving = true);
+
+    try {
+      final filePath = result.files.single.path!;
+
+      // 1. Парсим файл в List<Map>
+      final products = await PriceParser.parseFile(filePath);
+
+      if (products.isEmpty) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Файл пуст или имеет неверный формат'),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+        return;
+      }
+
+      // 2. Отправляем данные на Fly.io
+      final success =
+          await ref.read(priceListRepositoryProvider).uploadPriceList(
+                telegramUsername: widget.business.telegramUsername,
+                products: products,
+              );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(success
+                ? 'Успешно загружено ${products.length} позиций'
+                : 'Ошибка при сохранении на сервере'),
+            backgroundColor: success ? Colors.green : AppColors.error,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Ошибка парсинга: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
+  }
+
+  Future<void> _handleSave() async {
+    setState(() => _isSaving = true);
+    final String promptText = _promptController.text.trim();
+
+    try {
+      final bool success =
+          await ref.read(botPromptRepositoryProvider).updateSystemPrompt(
+                telegramUsername: widget.business.telegramUsername,
+                systemPrompt: promptText,
+              );
+
+      if (success) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Промпт сохранен'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } else {
+        throw Exception('Сервер Fly.io не ответил');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Ошибка: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(business.botName),
+        backgroundColor: AppColors.background,
+        elevation: 0,
         centerTitle: true,
+        title: Text(
+          widget.business.botName,
+          style: const TextStyle(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Inter',
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: AppColors.textPrimary,
+            size: 20,
+          ),
+          onPressed: () => context.pop(),
+        ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildStatusCard(isActivated, s),
-            const SizedBox(height: 32),
-            Text(
-              s.bmActions,
+            // --- Секция: Инструкции ---
+            TextField(
+              controller: _promptController,
+              maxLines: 10,
+              maxLength: 10000,
+              enabled: !_isSaving,
               style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-                color: AppColors.textSecondary,
-                letterSpacing: 1.2,
+                color: AppColors.textPrimary,
+                fontSize: 15,
+                fontFamily: 'Inter',
+              ),
+              decoration: InputDecoration(
+                labelText: 'Инструкции для бота',
+                labelStyle: const TextStyle(color: AppColors.textSecondary),
+                alignLabelWithHint: true,
+                filled: true,
+                fillColor: AppColors.card,
+                counterStyle: const TextStyle(color: AppColors.textSecondary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColors.border),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColors.border),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide:
+                      const BorderSide(color: AppColors.accent, width: 2),
+                ),
               ),
             ),
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
-              height: 56,
-              child: OutlinedButton.icon(
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => AppointmentsScreen(business: business),
-                  ),
-                ),
-                icon: const Icon(Icons.format_list_bulleted_rounded, size: 20),
-                label: Text(s.bmAppointments),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.textPrimary,
-                  side: const BorderSide(color: AppColors.border, width: 1.5),
+              height: 48,
+              child: ElevatedButton(
+                onPressed: _isSaving ? null : _handleSave,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.accent,
+                  foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  alignment: Alignment.centerLeft,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
                 ),
+                child: _isSaving
+                    ? const SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Text(
+                        'СОХРАНИТЬ',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Inter',
+                        ),
+                      ),
               ),
             ),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: OutlinedButton.icon(
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => BotConfigScreen(
-                      botId: business.botId,
-                      botName: business.botName,
-                      botCategory: business.botCategory,
-                    ),
-                  ),
-                ),
-                icon: const Icon(Icons.settings_suggest_rounded, size: 20),
-                label: Text(s.bmPromptSettings),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.textPrimary,
-                  side: const BorderSide(color: AppColors.border, width: 1.5),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  alignment: Alignment.centerLeft,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                ),
-              ),
-            ),
+
+            // --- Секция: Прайс-лист ---
             const SizedBox(height: 32),
-            if (!isActivated)
-              SizedBox(
+            const Text(
+              'Прайс-лист',
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Inter',
+              ),
+            ),
+            const SizedBox(height: 16),
+            InkWell(
+              onTap: _isSaving ? null : _pickPriceFile,
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
                 width: double.infinity,
-                height: 56,
-                child: ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.group_add_rounded),
-                  label: Text(
-                    s.bmActivateGroup,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, letterSpacing: 1),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accent,
-                    foregroundColor: AppColors.surface,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                decoration: BoxDecoration(
+                  color: AppColors.card,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.upload_file_rounded,
+                      color: _isSaving
+                          ? AppColors.textSecondary
+                          : AppColors.accent,
+                      size: 40,
                     ),
-                  ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _isSaving ? 'Обработка...' : 'Загрузить Excel/CSV',
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                      ),
+                    ),
+                  ],
                 ),
               ),
+            ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildStatusCard(bool isActivated, AppStrings s) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.border, width: 1),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: (isActivated ? Colors.green : Colors.orange)
-                  .withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              isActivated
-                  ? Icons.check_circle_rounded
-                  : Icons.pending_actions_rounded,
-              color: isActivated ? Colors.green : Colors.orange,
-              size: 32,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  isActivated ? s.bmActive : s.bmSetupRequired,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  isActivated ? s.bmReady : s.bmBindGroup,
-                  style: const TextStyle(
-                      fontSize: 14, color: AppColors.textSecondary),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
