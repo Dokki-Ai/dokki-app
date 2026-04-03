@@ -1,13 +1,18 @@
 {
   "version": 2,
-  "buildCommand": "flutter build web --release && cp -r public/* build/web/ || true",
   "outputDirectory": "build/web",
   "headers": [
     {
       "source": "/.well-known/apple-app-site-association",
       "headers": [
-        { "key": "Content-Type", "value": "application/json" },
-        { "key": "Access-Control-Allow-Origin", "value": "*" }
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
       ]
     }
   ],
