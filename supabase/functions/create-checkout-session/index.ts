@@ -28,20 +28,32 @@ serve(async (req: Request) => {
       }
     )
 
+    // Получаем пользователя
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser()
     if (userError || !user) throw new Error('Not authenticated')
 
     const { priceId, customerEmail, successUrl, cancelUrl } = await req.json()
     if (!priceId) throw new Error('Price ID is required')
 
+    // ЛОГИРУЕМ: Какие ссылки пришли из приложения?
+    console.log('Incoming Success URL:', successUrl);
+
+    // Создаем сессию Stripe
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [{ price: priceId, quantity: 1 }],
       mode: 'subscription',
       customer_email: customerEmail || user.email,
-      success_url: successUrl || 'https://app.dokki.org/subscription-success',
-      cancel_url: cancelUrl || 'https://app.dokki.org/bot-catalog',
-      metadata: { user_id: user.id },
+      // Принудительно используем HTTPS, если из Flutter пришло что-то странное
+      success_url: successUrl?.startsWith('http') 
+        ? successUrl 
+        : 'https://app.dokki.org/payment-success',
+      cancel_url: cancelUrl?.startsWith('http') 
+        ? cancelUrl 
+        : 'https://app.dokki.org/payment-cancel',
+      metadata: { 
+        user_id: user.id 
+      },
     })
 
     return new Response(JSON.stringify({ url: session.url }), {
@@ -49,6 +61,7 @@ serve(async (req: Request) => {
       status: 200,
     })
   } catch (error: any) {
+    console.error('Stripe Function Error:', error.message);
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 400,

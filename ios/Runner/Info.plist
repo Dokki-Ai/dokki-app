@@ -51,20 +51,6 @@
         <string>applinks:app.dokki.org</string>
     </array>
 
-    <key>CFBundleURLTypes</key>
-    <array>
-        <dict>
-            <key>CFBundleTypeRole</key>
-            <string>Editor</string>
-            <key>CFBundleURLName</key>
-            <string>org.dokki.app</string>
-            <key>CFBundleURLSchemes</key>
-            <array>
-                <string>dokkiapp</string>
-            </array>
-        </dict>
-    </array>
-
     <key>LSApplicationQueriesSchemes</key>
     <array>
         <string>https</string>

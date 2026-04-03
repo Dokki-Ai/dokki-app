@@ -8,6 +8,8 @@ import '../../features/auth/presentation/screens/auth_screen.dart';
 import '../navigation/main_screen.dart';
 import '../supabase/supabase_client.dart';
 import '../../features/payment/presentation/screens/payment_screen.dart';
+// ДОБАВЛЯЕМ ЭТОТ ИМПОРТ:
+import '../../features/payment/presentation/screens/payment_success_screen.dart';
 import '../../features/settings/presentation/screens/profile_screen.dart';
 import '../../features/settings/presentation/screens/language_screen.dart';
 import '../../features/settings/presentation/screens/notifications_screen.dart';
@@ -22,8 +24,6 @@ import '../../features/bot_management/domain/business.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final supabase = ref.watch(supabaseClientProvider);
-
-  // Слушатель состояния авторизации для обновления роутера
   final authListener = _AuthNotifier(supabase);
 
   return GoRouter(
@@ -37,6 +37,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       // Список защищенных маршрутов
       final isProtectedRoute = location.startsWith('/profile') ||
           location.startsWith('/payment') ||
+          location.startsWith('/payment-success') || // Добавили защиту сюда
           location.startsWith('/bot-config') ||
           location.startsWith('/bot-management') ||
           location.startsWith('/price-list') ||
@@ -44,7 +45,6 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       final isAuthRoute = location == '/auth';
 
-      // Логика перенаправления
       if (!isLoggedIn && isProtectedRoute) {
         return '/auth';
       }
@@ -56,19 +56,29 @@ final routerProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
-      // Главный экран (Магазин / Dashboard)
       GoRoute(
         path: '/',
         builder: (context, state) => const MainScreen(),
       ),
 
-      // Авторизация
       GoRoute(
         path: '/auth',
         builder: (context, state) => const AuthScreen(),
       ),
 
-      // Детали бота
+      // ЭКРАН УСПЕШНОЙ ОПЛАТЫ (Universal Link)
+      GoRoute(
+        path: '/payment-success',
+        builder: (context, state) => const PaymentSuccessScreen(),
+      ),
+
+      // ЭКРАН ОТМЕНЫ ОПЛАТЫ (Universal Link)
+      GoRoute(
+        path: '/payment-cancel',
+        builder: (context, state) =>
+            const MainScreen(), // Или отдельный экран отмены
+      ),
+
       GoRoute(
         path: '/bot-details/:category',
         builder: (context, state) {
@@ -77,7 +87,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
 
-      // Профиль пользователя
       GoRoute(
         path: '/profile',
         builder: (context, state) {
@@ -86,19 +95,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
 
-      // Настройки: Язык
       GoRoute(
         path: '/language',
         builder: (context, state) => const LanguageScreen(),
       ),
 
-      // Настройки: Уведомления
       GoRoute(
         path: '/notifications',
         builder: (context, state) => const NotificationsScreen(),
       ),
 
-      // Экран оплаты/подписки
       GoRoute(
         path: '/payment',
         builder: (context, state) {
@@ -113,7 +119,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
 
-      // Первичная настройка бота
       GoRoute(
         path: '/bot-config/:botId/:botName/:botCategory',
         builder: (context, state) => BotConfigScreen(
@@ -123,7 +128,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         ),
       ),
 
-      // Панель управления конкретным ботом
       GoRoute(
         path: '/bot-management/:id',
         builder: (context, state) => BotManagementScreen(
@@ -131,7 +135,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         ),
       ),
 
-      // Список товаров (Прайс-лист)
       GoRoute(
         path: '/price-list',
         builder: (context, state) => PriceListScreen(
@@ -139,7 +142,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         ),
       ),
 
-      // Создание или редактирование товара
       GoRoute(
         path: '/product-edit',
         builder: (context, state) {
