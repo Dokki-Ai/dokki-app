@@ -13,6 +13,9 @@ class MyBotsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // === ГЛОБАЛЬНЫЕ ЛОГИ ЭКРАНА ===
+    debugPrint('=== MY BOTS SCREEN: build() started ===');
+
     final authState = ref.watch(authStateProvider);
     final s = ref.watch(stringsProvider);
 
@@ -32,30 +35,54 @@ class MyBotsScreen extends ConsumerWidget {
         elevation: 0,
       ),
       body: authState.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.accent),
-        ),
-        error: (err, stack) => Center(
-          child: Text('Ошибка: $err',
-              style: const TextStyle(color: AppColors.error)),
-        ),
+        loading: () {
+          debugPrint('DEBUG Auth: Loading...');
+          return const Center(
+            child: CircularProgressIndicator(color: AppColors.accent),
+          );
+        },
+        error: (err, stack) {
+          debugPrint('DEBUG Auth ERROR: $err');
+          return Center(
+            child: Text('Ошибка авторизации: $err',
+                style: const TextStyle(color: AppColors.error)),
+          );
+        },
         data: (user) {
+          // Проверяем, видит ли провайдер текущего юзера
           if (user == null) {
+            debugPrint('DEBUG Auth: User is NULL (Showing Locked State)');
             return _buildLockedState(context, s);
           }
 
+          debugPrint('DEBUG Auth: User ID = ${user.id}');
+
+          // Теперь следим за провайдером ботов
           final connectedBotsAsync = ref.watch(connectedBotsProvider);
 
           return connectedBotsAsync.when(
-            loading: () => const Center(
-              child: CircularProgressIndicator(color: AppColors.accent),
-            ),
-            error: (err, stack) => Center(
-              child: Text('Ошибка: $err',
-                  style: const TextStyle(color: AppColors.error)),
-            ),
+            loading: () {
+              debugPrint('DEBUG Bots Provider: Loading...');
+              return const Center(
+                child: CircularProgressIndicator(color: AppColors.accent),
+              );
+            },
+            error: (err, stack) {
+              debugPrint('DEBUG Bots Provider ERROR: $err');
+              debugPrint('DEBUG Bots Provider STACK: $stack');
+              return Center(
+                child: Text('Ошибка базы: $err',
+                    style: const TextStyle(color: AppColors.error)),
+              );
+            },
             data: (businesses) {
+              // Самый важный лог: сколько записей пришло из Supabase
+              debugPrint(
+                  'DEBUG Bots Provider DATA: Received ${businesses.length} items');
+
               if (businesses.isEmpty) {
+                debugPrint(
+                    'DEBUG Bots Provider: List is EMPTY (Showing Empty State)');
                 return _buildEmptyState(context, s);
               }
 
@@ -65,8 +92,9 @@ class MyBotsScreen extends ConsumerWidget {
                 itemCount: businesses.length,
                 itemBuilder: (context, index) {
                   final business = businesses[index];
+                  debugPrint(
+                      'DEBUG: Rendering Bot Card for ID: ${business.id}');
 
-                  // Alignment.centerLeft прижимает карточку к левой части
                   return Align(
                     alignment: Alignment.centerLeft,
                     child: ConstrainedBox(
@@ -75,10 +103,14 @@ class MyBotsScreen extends ConsumerWidget {
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         child: BusinessCard(
                           business: business,
-                          onManage: () => context.push(
-                            '/bot-management/${business.id}',
-                            extra: business,
-                          ),
+                          onManage: () {
+                            debugPrint(
+                                'DEBUG: Navigate to management for ${business.id}');
+                            context.push(
+                              '/bot-management/${business.id}',
+                              extra: business,
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -115,7 +147,10 @@ class MyBotsScreen extends ConsumerWidget {
               width: 200,
               height: 48,
               child: ElevatedButton(
-                onPressed: () => context.push('/auth'),
+                onPressed: () {
+                  debugPrint('DEBUG UI: Clicked Login Button');
+                  context.push('/auth');
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.accent,
                   shape: RoundedRectangleBorder(
@@ -160,7 +195,10 @@ class MyBotsScreen extends ConsumerWidget {
               width: 200,
               height: 48,
               child: OutlinedButton(
-                onPressed: () => context.go('/'),
+                onPressed: () {
+                  debugPrint('DEBUG UI: Clicked Go to Catalog');
+                  context.go('/');
+                },
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: AppColors.accent, width: 1.5),
                   shape: RoundedRectangleBorder(

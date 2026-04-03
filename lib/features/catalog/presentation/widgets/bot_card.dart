@@ -17,27 +17,39 @@ class BotCard extends ConsumerWidget {
     this.isGridMode = false,
   });
 
-  // --- НАДЕЖНЫЙ СБОРЩИК URL (Задача 66) ---
+  // --- ИСПРАВЛЕННЫЙ СБОРЩИК URL (Задача 66) ---
   String _getFinalUrl(String? rawPath) {
-    if (rawPath == null || rawPath.isEmpty) return '';
+    debugPrint('DEBUG BotCard input: $rawPath');
+
+    if (rawPath == null || rawPath.isEmpty) {
+      debugPrint('DEBUG BotCard: rawPath is empty');
+      return '';
+    }
 
     // Если в БД уже лежит полная ссылка
     if (rawPath.startsWith('http')) {
-      return rawPath.contains('?') ? '$rawPath&v=1.0.2' : '$rawPath?v=1.0.2';
+      final url =
+          rawPath.contains('?') ? '$rawPath&v=1.0.3' : '$rawPath?v=1.0.3';
+      debugPrint('DEBUG BotCard output (direct): $url');
+      return url;
     }
 
     // Извлекаем только имя файла (например, 'sales.png')
     final fileName = rawPath.split('/').last;
 
-    // Твой эндпоинт Supabase Storage
+    // НОВЫЙ ЭНДПОИНТ (capqdnwuquxdeuqnohps) без /shop/
     const baseUrl =
-        'https://clpksrqstnywmrvvzwxu.supabase.co/storage/v1/object/public/bot-images/shop/';
+        'https://capqdnwuquxdeuqnohps.supabase.co/storage/v1/object/public/bot-images/';
 
-    return '$baseUrl$fileName?v=1.0.2';
+    final finalUrl = '$baseUrl$fileName?v=1.0.3';
+    debugPrint('DEBUG BotCard output (constructed): $finalUrl');
+
+    return finalUrl;
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Используем stringsProvider, как в твоем исходном коде
     final s = ref.watch(stringsProvider);
 
     return GestureDetector(
@@ -45,14 +57,14 @@ class BotCard extends ConsumerWidget {
       child: Container(
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
-          color: AppColors.card,
+          color: AppColors.surface, // Используем surface для карточек
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: AppColors.border),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
-              color: Color(0x0F000000),
-              blurRadius: 8,
-              offset: Offset(0, 4),
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -84,7 +96,7 @@ class BotCard extends ConsumerWidget {
     return Row(
       children: [
         SizedBox(
-          width: 150, // Немного уменьшил для баланса
+          width: 140,
           height: double.infinity,
           child: _buildImageWidget(),
         ),
@@ -103,7 +115,7 @@ class BotCard extends ConsumerWidget {
 
     return CachedNetworkImage(
       imageUrl: finalUrl,
-      fit: BoxFit.contain, // contain лучше для прозрачных PNG
+      fit: BoxFit.contain,
       alignment: Alignment.center,
       placeholder: (context, url) => Container(
         color: AppColors.background,
@@ -113,6 +125,7 @@ class BotCard extends ConsumerWidget {
         ),
       ),
       errorWidget: (context, url, error) {
+        debugPrint('DEBUG CachedNetworkImage Error on: $url');
         return Container(
           color: AppColors.background,
           child: const Column(
@@ -142,7 +155,7 @@ class BotCard extends ConsumerWidget {
           style: const TextStyle(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.bold,
-            fontSize: 17,
+            fontSize: 16,
             fontFamily: 'Inter',
           ),
         ),
@@ -181,7 +194,7 @@ class BotCard extends ConsumerWidget {
         onPressed: onConnect,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.accent,
-          foregroundColor: AppColors.surface,
+          foregroundColor: Colors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           padding: EdgeInsets.zero,
@@ -189,7 +202,7 @@ class BotCard extends ConsumerWidget {
         child: Text(
           s.catDetails.toUpperCase(),
           style: const TextStyle(
-              fontSize: 12, fontWeight: FontWeight.w600, fontFamily: 'Inter'),
+              fontSize: 12, fontWeight: FontWeight.bold, fontFamily: 'Inter'),
         ),
       ),
     );

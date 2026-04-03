@@ -68,7 +68,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const AuthScreen(),
       ),
 
-      // Детали бота (принимает категорию: admin, sales, support)
+      // Детали бота
       GoRoute(
         path: '/bot-details/:category',
         builder: (context, state) {
@@ -154,13 +154,9 @@ final routerProvider = Provider<GoRouter>((ref) {
   );
 });
 
-/// Класс-утилита для прослушивания событий Supabase Auth
 class _AuthNotifier extends ChangeNotifier {
   _AuthNotifier(SupabaseClient supabase) {
     supabase.auth.onAuthStateChange.listen((data) {
-      if (kDebugMode) {
-        print('Router Auth Change Event: ${data.event}');
-      }
       notifyListeners();
     });
   }
