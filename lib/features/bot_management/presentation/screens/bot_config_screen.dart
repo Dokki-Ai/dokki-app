@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // ← ДОБАВЛЕН
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
@@ -229,7 +229,7 @@ class _BotConfigScreenState extends ConsumerState<BotConfigScreen> {
               ),
               const SizedBox(height: 24),
 
-              // TELEGRAM BOT TOKEN С КНОПКОЙ PASTE
+              // TELEGRAM BOT TOKEN С ЛОГАМИ
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -265,13 +265,19 @@ class _BotConfigScreenState extends ConsumerState<BotConfigScreen> {
                       icon: const Icon(Icons.content_paste,
                           color: AppColors.accent, size: 28),
                       onPressed: () async {
+                        print('🔵 TG Paste button clicked!');
                         final data =
                             await Clipboard.getData(Clipboard.kTextPlain);
+                        print('📋 Clipboard data: ${data?.text ?? "NULL"}');
+
                         if (data?.text != null) {
+                          print('✅ Setting TG text to controller');
                           setState(() {
                             _botTokenController.text = data!.text!;
                             _botTokenError = null;
                           });
+                        } else {
+                          print('❌ TG Clipboard is empty');
                         }
                       },
                       tooltip: 'Paste',
@@ -282,7 +288,7 @@ class _BotConfigScreenState extends ConsumerState<BotConfigScreen> {
 
               const SizedBox(height: 20),
 
-              // OPENAI API KEY С КНОПКОЙ PASTE
+              // OPENAI API KEY С ЛОГАМИ
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -321,13 +327,19 @@ class _BotConfigScreenState extends ConsumerState<BotConfigScreen> {
                       icon: const Icon(Icons.content_paste,
                           color: AppColors.accent, size: 28),
                       onPressed: () async {
+                        print('🔵 OpenAI Paste button clicked!');
                         final data =
                             await Clipboard.getData(Clipboard.kTextPlain);
+                        print('📋 Clipboard data: ${data?.text ?? "NULL"}');
+
                         if (data?.text != null) {
+                          print('✅ Setting OpenAI text to controller');
                           setState(() {
                             _apiKeyController.text = data!.text!;
                             _apiKeyError = null;
                           });
+                        } else {
+                          print('❌ OpenAI Clipboard is empty');
                         }
                       },
                       tooltip: 'Paste',

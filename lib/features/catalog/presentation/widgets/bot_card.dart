@@ -17,39 +17,35 @@ class BotCard extends ConsumerWidget {
     this.isGridMode = false,
   });
 
-  // --- ИСПРАВЛЕННЫЙ СБОРЩИК URL (Задача 66) ---
+  // --- ПОЛНОСТЬЮ ИСПРАВЛЕННЫЙ СБОРЩИК URL ---
   String _getFinalUrl(String? rawPath) {
-    debugPrint('DEBUG BotCard input: $rawPath');
-
     if (rawPath == null || rawPath.isEmpty) {
-      debugPrint('DEBUG BotCard: rawPath is empty');
       return '';
     }
 
-    // Если в БД уже лежит полная ссылка
+    // Если в БД уже лежит полная ссылка (https://...)
     if (rawPath.startsWith('http')) {
+      // Версия 1.0.4 для принудительного сброса кэша картинок
       final url =
-          rawPath.contains('?') ? '$rawPath&v=1.0.3' : '$rawPath?v=1.0.3';
-      debugPrint('DEBUG BotCard output (direct): $url');
+          rawPath.contains('?') ? '$rawPath&v=1.0.4' : '$rawPath?v=1.0.4';
+      debugPrint('🚀 BOT IMAGE LOAD (direct): $url');
       return url;
     }
 
-    // Извлекаем только имя файла (например, 'sales.png')
+    // Извлекаем только имя файла
     final fileName = rawPath.split('/').last;
 
-    // НОВЫЙ ЭНДПОИНТ (capqdnwuquxdeuqnohps) без /shop/
     const baseUrl =
         'https://capqdnwuquxdeuqnohps.supabase.co/storage/v1/object/public/bot-images/';
 
-    final finalUrl = '$baseUrl$fileName?v=1.0.3';
-    debugPrint('DEBUG BotCard output (constructed): $finalUrl');
+    final finalUrl = '$baseUrl$fileName?v=1.0.4';
+    debugPrint('🚀 BOT IMAGE LOAD (constructed): $finalUrl');
 
     return finalUrl;
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Используем stringsProvider, как в твоем исходном коде
     final s = ref.watch(stringsProvider);
 
     return GestureDetector(
@@ -57,7 +53,7 @@ class BotCard extends ConsumerWidget {
       child: Container(
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
-          color: AppColors.surface, // Используем surface для карточек
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: AppColors.border),
           boxShadow: [
@@ -115,7 +111,7 @@ class BotCard extends ConsumerWidget {
 
     return CachedNetworkImage(
       imageUrl: finalUrl,
-      fit: BoxFit.contain,
+      fit: BoxFit.contain, // Оставляем contain, чтобы картинка не обрезалась
       alignment: Alignment.center,
       placeholder: (context, url) => Container(
         color: AppColors.background,

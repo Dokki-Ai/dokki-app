@@ -1,15 +1,9 @@
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class StripeService {
   final _supabase = Supabase.instance.client;
-
-  // Твой эндпоинт Edge Function
-  static const String checkoutUrl =
-      'https://capqdnwuquxdeuqnohps.supabase.co/functions/v1/create-checkout-session';
 
   // Актуальный Price ID из Stripe
   static const String priceId = 'price_1THeDO1nVM8AbdfCUeaylULL';
@@ -25,26 +19,22 @@ class StripeService {
     try {
       debugPrint('StripeService: Initiating checkout session...');
 
-      final response = await http.post(
-        Uri.parse(checkoutUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${session.accessToken}',
-        },
-        body: jsonEncode({
+      // Нативный вызов Supabase Edge Function.
+      // Автоматически добавляет 'Authorization': 'Bearer ${session.accessToken}'
+      final response = await _supabase.functions.invoke(
+        'create-checkout-session',
+        body: {
           'priceId': priceId,
-          // ИСПОЛЬЗУЕМ ТОЛЬКО HTTPS UNIVERSAL LINKS
-          // Это исключает ошибку "Bad state: Origin..."
           'successUrl': 'https://app.dokki.org/payment-success',
           'cancelUrl': 'https://app.dokki.org/payment-cancel',
-        }),
+        },
       );
 
-      debugPrint('Stripe Response Status: ${response.statusCode}');
+      debugPrint('Stripe Response Status: ${response.status}');
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final String? stripeRedirectUrl = data['url'];
+      if (response.status == 200 || response.status == 201) {
+        // Нативный клиент уже возвращает распарсенный JSON в response.data
+        final String? stripeRedirectUrl = response.data['url'];
 
         if (stripeRedirectUrl != null && stripeRedirectUrl.startsWith('http')) {
           final uri = Uri.parse(stripeRedirectUrl);
@@ -54,7 +44,7 @@ class StripeService {
           // LaunchMode.externalApplication КРИТИЧЕН.
           // Мы открываем системный браузер. Когда оплата завершится,
           // редирект на https://app.dokki.org будет перехвачен iOS/Android
-          // и вернет пользователя в приложение через Universal Links.
+          // или обработан Cloudflare во Flutter Web.
           final launched =
               await launchUrl(uri, mode: LaunchMode.externalApplication);
 
@@ -66,10 +56,15 @@ class StripeService {
           throw 'Server returned empty or invalid checkout URL';
         }
       } else {
-        final errorData = jsonDecode(response.body);
-        debugPrint('StripeService Error Response: ${response.body}');
-        throw errorData['error'] ?? 'Server error ${response.statusCode}';
+        debugPrint('StripeService Error Response: ${response.data}');
+        throw response.data?['error'] ?? 'Server error ${response.status}';
       }
+    } on FunctionException catch (e) {
+      debugPrint(
+          'StripeService FunctionException: ${e.reasonPhrase} - ${e.details}');
+      throw e.details?['error'] ??
+          e.reasonPhrase ??
+          'Edge Function connection error';
     } catch (e) {
       debugPrint('StripeService Exception: $e');
       rethrow;
