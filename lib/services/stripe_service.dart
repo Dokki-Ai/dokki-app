@@ -7,27 +7,30 @@ import 'dart:js' as js;
 class StripeService {
   final _supabase = Supabase.instance.client;
 
-  // Актуальный Price ID из Stripe
+  // Актуальный Price ID из твоего Stripe
   static const String priceId = 'price_1THeDO1nVM8AbdfCUeaylULL';
 
-  /// Создает сессию оплаты с передачей botId в пути URL
   Future<void> createCheckoutSession({required String botId}) async {
-    final session = _supabase.auth.currentSession;
-
-    if (session == null) {
-      debugPrint('StripeService: No active Supabase session');
-      throw 'User not authenticated';
-    }
-
     try {
       debugPrint(
-          'StripeService: Initiating checkout session for bot $botId...');
+          'StripeService: Принудительное обновление сессии перед оплатой...');
 
-      // ЗАДАЧА #10: Передаем botId как часть пути для надежности редиректа
+      // ГАРАНТИЯ СВЕЖЕГО JWT: Обновляем сессию прямо перед вызовом Edge Function
+      final authResponse = await _supabase.auth.refreshSession();
+      final session = authResponse.session;
+
+      if (session == null) {
+        throw 'Сессия не найдена. Пожалуйста, войдите в аккаунт заново.';
+      }
+
+      debugPrint(
+          'StripeService: JWT обновлен, вызываем функцию для бота $botId...');
+
       final response = await _supabase.functions.invoke(
         'create-checkout-session',
         body: {
           'priceId': priceId,
+          // Формируем URL без решеток (Path Strategy)
           'successUrl': 'https://app.dokki.org/payment-success/$botId',
           'cancelUrl': 'https://app.dokki.org/payment-cancel',
         },
@@ -38,25 +41,26 @@ class StripeService {
 
         if (stripeRedirectUrl != null && stripeRedirectUrl.startsWith('http')) {
           if (kIsWeb) {
-            // Открываем Stripe в той же вкладке через JS
+            // Прямой редирект в той же вкладке для Web
             js.context.callMethod(
                 'eval', ['window.location.href = "$stripeRedirectUrl"']);
           } else {
-            // На мобиле — внешнее приложение
+            // Открытие в браузере для мобилок
             final uri = Uri.parse(stripeRedirectUrl);
             final launched =
                 await launchUrl(uri, mode: LaunchMode.externalApplication);
-
-            if (!launched) throw 'Could not launch payment URL';
+            if (!launched) throw 'Не удалось открыть страницу оплаты';
           }
         } else {
-          throw 'Server returned invalid checkout URL';
+          throw 'Ошибка: Stripe не вернул ссылку на оплату';
         }
       } else {
-        throw response.data?['error'] ?? 'Server error ${response.status}';
+        final errorMsg =
+            response.data?['error'] ?? 'Ошибка сервера ${response.status}';
+        throw errorMsg;
       }
     } catch (e) {
-      debugPrint('StripeService Exception: $e');
+      debugPrint('StripeService Error: $e');
       rethrow;
     }
   }
