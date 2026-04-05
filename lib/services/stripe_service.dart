@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:js' as js;
 
 class StripeService {
   final _supabase = Supabase.instance.client;
@@ -40,17 +38,18 @@ class StripeService {
         final String? stripeRedirectUrl = response.data['url'];
 
         if (stripeRedirectUrl != null && stripeRedirectUrl.startsWith('http')) {
-          if (kIsWeb) {
-            // Прямой редирект в той же вкладке для Web
-            js.context.callMethod(
-                'eval', ['window.location.href = "$stripeRedirectUrl"']);
-          } else {
-            // Открытие в браузере для мобилок
-            final uri = Uri.parse(stripeRedirectUrl);
-            final launched =
-                await launchUrl(uri, mode: LaunchMode.externalApplication);
-            if (!launched) throw 'Не удалось открыть страницу оплаты';
-          }
+          final uri = Uri.parse(stripeRedirectUrl);
+
+          // Кроссплатформенный вызов:
+          // webOnlyWindowName: '_self' откроет ссылку в той же вкладке для Web (замена dart:js)
+          // mode: LaunchMode.externalApplication откроет браузер для мобилок
+          final launched = await launchUrl(
+            uri,
+            mode: LaunchMode.externalApplication,
+            webOnlyWindowName: '_self',
+          );
+
+          if (!launched) throw 'Не удалось открыть страницу оплаты';
         } else {
           throw 'Ошибка: Stripe не вернул ссылку на оплату';
         }

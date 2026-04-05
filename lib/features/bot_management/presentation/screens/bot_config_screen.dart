@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
+import 'package:supabase_flutter/supabase_flutter.dart'; // Добавлен импорт
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../providers/bot_management_providers.dart';
@@ -73,10 +74,13 @@ class _BotConfigScreenState extends ConsumerState<BotConfigScreen> {
 
     try {
       final url = Uri.parse(ApiConstants.configUrl);
+
+      // ИЗМЕНЕНО: Добавлен business_id из сессии Supabase
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
+          'business_id': Supabase.instance.client.auth.currentUser?.id ?? '',
           'telegram_token': _botTokenController.text.trim(),
           'openai_key': _apiKeyController.text.trim(),
           'business_name': _businessNameController.text.trim(),
@@ -229,7 +233,7 @@ class _BotConfigScreenState extends ConsumerState<BotConfigScreen> {
               ),
               const SizedBox(height: 24),
 
-              // TELEGRAM BOT TOKEN С ЛОГАМИ
+              // TELEGRAM BOT TOKEN
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -265,20 +269,13 @@ class _BotConfigScreenState extends ConsumerState<BotConfigScreen> {
                       icon: const Icon(Icons.content_paste,
                           color: AppColors.accent, size: 28),
                       onPressed: () async {
-                        debugPrint('🔵 TG Paste button clicked!');
                         final data =
                             await Clipboard.getData(Clipboard.kTextPlain);
-                        debugPrint(
-                            '📋 Clipboard data: ${data?.text ?? "NULL"}');
-
                         if (data?.text != null) {
-                          debugPrint('✅ Setting TG text to controller');
                           setState(() {
                             _botTokenController.text = data!.text!;
                             _botTokenError = null;
                           });
-                        } else {
-                          debugPrint('❌ TG Clipboard is empty');
                         }
                       },
                       tooltip: 'Paste',
@@ -289,7 +286,7 @@ class _BotConfigScreenState extends ConsumerState<BotConfigScreen> {
 
               const SizedBox(height: 20),
 
-              // OPENAI API KEY С ЛОГАМИ
+              // OPENAI API KEY
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -329,20 +326,13 @@ class _BotConfigScreenState extends ConsumerState<BotConfigScreen> {
                       icon: const Icon(Icons.content_paste,
                           color: AppColors.accent, size: 28),
                       onPressed: () async {
-                        debugPrint('🔵 OpenAI Paste button clicked!');
                         final data =
                             await Clipboard.getData(Clipboard.kTextPlain);
-                        debugPrint(
-                            '📋 Clipboard data: ${data?.text ?? "NULL"}');
-
                         if (data?.text != null) {
-                          debugPrint('✅ Setting OpenAI text to controller');
                           setState(() {
                             _apiKeyController.text = data!.text!;
                             _apiKeyError = null;
                           });
-                        } else {
-                          debugPrint('❌ OpenAI Clipboard is empty');
                         }
                       },
                       tooltip: 'Paste',
